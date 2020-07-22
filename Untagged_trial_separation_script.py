@@ -173,8 +173,20 @@ df_col5 = df_speed[:,5]
 #per "https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array"
 interp_5 = pd.DataFrame(df_col5).interpolate().values.ravel().tolist()
 #%% Try filtfilt
-b, a = signal.butter(3,0.05)
-filt_5 = signal.filtfilt(b,a,interp_5)
+###############################################################
+# Define the sampling frequency in Hz
+fs = 30 
+# Define the corner frequency of the filter you want to use in Hz
+f_c = 5
+# Design a 4-pole low pass filter with butter
+blow, alow = signal.butter(4,f_c/(fs/2), 'low')
+# Get your filtered data
+filt_5 = signal.filtfilt(blow, alow, interp_5)
+###############################################################
+
+
+#b, a = signal.butter(3,0.05)
+#filt_5 = signal.filtfilt(b,a,interp_5)
 
 plt.plot(filt_5)
 plt.ylabel('filtered marker 5')
