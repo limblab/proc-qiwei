@@ -147,6 +147,7 @@ default colour (in this case, jet) will continue to apply.
 """
 
 #%% Read in the 2D reaching dataset to compare the hand speed with 3D dataset (TEMP)
+"""
 df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
 nframes_2D = len(df_2D)
 df_2D = df_2D.drop(columns = list_to_delete)
@@ -165,7 +166,7 @@ where_are_NaNs = np.isnan(df_np_2D)
 df_np_2D[where_are_NaNs] = 0
 where_are_NaNs = np.isnan(df_speed_2D)
 df_speed_2D[where_are_NaNs] = 0
-
+"""
 
 #%% Plot a histogram distribution of the hand speed for both 2D and 3D datasets (TEMP)
 
@@ -176,7 +177,7 @@ df_speed_2D[where_are_NaNs] = 0
 2D wrist2 speed: df_speed_2D[:,6]
 3D wrist2 speed: df_speed[:,6]
 """
-
+"""
 x1 = df_speed_2D[:,6]
 x2 = df_speed[:,6]
 
@@ -190,7 +191,7 @@ plt.show()
 
 print(np.mean(x1))
 print(np.mean(x2))
-
+"""
 
 
 #%% plot the data first to see if it makes sense or not

@@ -5,7 +5,8 @@ Created on Mon Sep  7 16:27:11 2020
 @author: dongq
 
 Does a 3D scatterplot of the wrist2 marker in the space based on the input dataset
-Does a speed historgram plot of the wrist2 marker, comparing between 2D and 3D reaching tasks (gets another input dataset)
+Does a speed historgram plot of the wrist2 marker, comparing between 2D and 3D
+ reaching tasks (gets another dataset, not the one mentioned in the previous line)
 Does a speed plot of all the markers based on the input dataset
 
 """

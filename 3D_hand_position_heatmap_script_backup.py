@@ -170,6 +170,35 @@ y_lim_high = y_high+whole_plot_limit
 z_lim_low = z_low-whole_plot_limit
 z_lim_high = z_high+whole_plot_limit
 
+#%%
+"""
+Front should be the XZ plane
+Side should be the YZ? Or Y.-Z plane?
+"""
+
+#fig = plt.figure()
+#ax = Axes3D(fig)
+
+#all_points = np.transpose(all_points, (1,0,2))
+#ax.view_init(azim=-48, elev=28)
+
+#ax.set_xlim([x_low-100, x_high+100])
+#ax.set_ylim([y_low-100, y_high+100])
+#ax.set_zlim([z_low-100, z_high+100])
+#ax.set_xlabel('x (mm)')
+#ax.set_ylabel('y (mm)')
+#ax.set_zlabel('z (mm)')    
+#ax.scatter(points[:, 0], points[:, 1], points[:, 2], 'bo', alpha=0.5)
+
+#%% Step1-4: Take only wrist_2 out
+#https://stackoverflow.com/questions/43643506/select-columns-based-on-columns-names-containing-a-specific-string-in-pandas?noredirect=1&lq=1
+#df_exp_wrist2 = df_exp_only.loc[:,df_exp_only.columns.str.contains('wrist2')]
+
+#And delete the scoring columns that we don't need for this script, only the x,y,z
+#df_exp_wrist2 = df_exp_wrist2.drop(labels=['wrist2_error','wrist2_ncams','wrist2_score'],axis=1)
+
+#And make it from milimeters/frame to meters/second
+#df_exp_wrist2 = df_exp_wrist2
 
 #%% Step1-4 Again: Take wrist_2 out but with arrays instead of dataframes
 df_exp_wrist2_x = all_x_points[6,:].T
@@ -177,6 +206,9 @@ df_exp_wrist2_y = all_y_points[6,:].T
 df_exp_wrist2_z = all_z_points[6,:].T
 
 df_exp_wrist2 = np.vstack((df_exp_wrist2_x, df_exp_wrist2_y, df_exp_wrist2_z)).T
+
+
+#df_exp_wrist2 = df_exp_wrist2.reshape(int(df_exp_wrist2.shape[0]/3),3)
 
 #%% Step2: Find the min and max for x,y,z values for wrist2/hand3 marker
 
@@ -202,7 +234,7 @@ axis_limit_max = wrist2_max_of_maxs + 2
 #%% Step3-1: Count, for each block (x,y,z), how many markers are there throughout the whole experiment phase
 
 #Current unit should be in meters (m)
-decimal_nums = 1
+decimal_nums = 0
 
 df_exp_wrist2_rounded = df_exp_wrist2.round(decimals=decimal_nums)
 
