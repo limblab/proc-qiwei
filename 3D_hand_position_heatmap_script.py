@@ -103,7 +103,7 @@ df_exp_only = experiment_trial_segment(df, f_frame_list)*1000/1e6
 
 #%%Step1-3-1: Separate all the useful columns (x,y,z; not the scores) out, and take the max and min values
 
-whole_plot_limit = 10
+whole_plot_limit = 1
 
 
 bp_interested = ['shoulder1', 'arm1', 'arm2', 'elbow1', 'elbow2', 'wrist1', 
@@ -201,8 +201,9 @@ axis_limit_max = wrist2_max_of_maxs + 2
     
 #%% Step3-1: Count, for each block (x,y,z), how many markers are there throughout the whole experiment phase
 
-#Current unit should be in meters (m)
-decimal_nums = 1
+#Current unit should be in meters (m), so decimal_nums = 1 means that we round
+#the data up in 10cm blocks?
+decimal_nums = 2
 
 df_exp_wrist2_rounded = df_exp_wrist2.round(decimals=decimal_nums)
 
@@ -210,9 +211,9 @@ wrist2_rounded_x_min = np.nanmin(df_exp_wrist2_rounded[:,0])
 wrist2_rounded_y_min = np.nanmin(df_exp_wrist2_rounded[:,1])
 wrist2_rounded_z_min = np.nanmin(df_exp_wrist2_rounded[:,2])
 
-df_exp_wrist2_rounded_zeroed_x = (df_exp_wrist2_rounded[:,0] - wrist2_rounded_x_min)*10
-df_exp_wrist2_rounded_zeroed_y = (df_exp_wrist2_rounded[:,1] - wrist2_rounded_y_min)*10
-df_exp_wrist2_rounded_zeroed_z = (df_exp_wrist2_rounded[:,2] - wrist2_rounded_z_min)*10
+df_exp_wrist2_rounded_zeroed_x = (df_exp_wrist2_rounded[:,0] - wrist2_rounded_x_min)*100
+df_exp_wrist2_rounded_zeroed_y = (df_exp_wrist2_rounded[:,1] - wrist2_rounded_y_min)*100
+df_exp_wrist2_rounded_zeroed_z = (df_exp_wrist2_rounded[:,2] - wrist2_rounded_z_min)*100
 
 heatmap_x_axis_length = int(np.nanmax(df_exp_wrist2_rounded_zeroed_x) - np.nanmin(df_exp_wrist2_rounded_zeroed_x) + 1)
 heatmap_y_axis_length = int(np.nanmax(df_exp_wrist2_rounded_zeroed_y) - np.nanmin(df_exp_wrist2_rounded_zeroed_y) + 1)
@@ -252,19 +253,25 @@ wrist2_up_XY_axis_heatmap = np.zeros((int((x_lim_high-x_lim_low)*lim_percentage/
 wrist2_front_YZ_axis_heatmap = np.zeros((int((y_lim_high-y_lim_low)*lim_percentage/step),int((z_lim_high-z_lim_low)*lim_percentage/step))) 
 
 for i in range(df_exp_wrist2_rounded_right_XZ.shape[0]):
-    temp_x = int((df_exp_wrist2_rounded_right_XZ[i,0] + whole_plot_limit) / step)
-    temp_z = int((df_exp_wrist2_rounded_right_XZ[i,1] + whole_plot_limit) / step)
+    #temp_x = int((df_exp_wrist2_rounded_right_XZ[i,0] + whole_plot_limit) / step)
+    #temp_z = int((df_exp_wrist2_rounded_right_XZ[i,1] + whole_plot_limit) / step)
+    temp_x = int((df_exp_wrist2_rounded_right_XZ[i,0]) / step)
+    temp_z = int((df_exp_wrist2_rounded_right_XZ[i,1]) / step)
     wrist2_right_XZ_axis_heatmap[temp_x,temp_z] += 1
 
 for i in range(df_exp_wrist2_rounded_up_XY.shape[0]):
-    temp_x = int((df_exp_wrist2_rounded_up_XY[i,0] + whole_plot_limit) / step)
-    temp_y = int((df_exp_wrist2_rounded_up_XY[i,1] + whole_plot_limit) / step)
+    #temp_x = int((df_exp_wrist2_rounded_up_XY[i,0] + whole_plot_limit) / step)
+    #temp_y = int((df_exp_wrist2_rounded_up_XY[i,1] + whole_plot_limit) / step)
+    temp_x = int((df_exp_wrist2_rounded_up_XY[i,0]) / step)
+    temp_y = int((df_exp_wrist2_rounded_up_XY[i,1]) / step)
     wrist2_up_XY_axis_heatmap[temp_x,temp_y] += 1
     #wrist2_up_XY_axis_heatmap[temp_y,temp_x] += 1
     
 for i in range(df_exp_wrist2_rounded_front_YZ.shape[0]):
     temp_y = int((df_exp_wrist2_rounded_front_YZ[i,0] + whole_plot_limit) / step)
     temp_z = int((df_exp_wrist2_rounded_front_YZ[i,1] + whole_plot_limit) / step)
+    #temp_y = int((df_exp_wrist2_rounded_front_YZ[i,0]) / step)
+    #temp_z = int((df_exp_wrist2_rounded_front_YZ[i,1]) / step)
     wrist2_front_YZ_axis_heatmap[temp_y,temp_z] += 1
     
 #wrist2_up_XY_axis_heatmap_reverse = (wrist2_up_XY_axis_heatmap * step) - whole_plot_limit
@@ -295,7 +302,8 @@ plt.figure()
 #plt.scatter(10,15,1000)
 #plt.title("Wrist2 Hand Position Heatmap Up->Down View",**font_medium)
 
-ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
+#ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
+ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True')
 #ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels)
 plt.xlabel('X axis (in cm)',**font_medium)
 plt.ylabel('Y axis (in cm)',**font_medium)
