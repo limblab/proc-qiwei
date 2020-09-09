@@ -188,6 +188,7 @@ df_exp_wrist2_x = all_x_points[6,:].T
 df_exp_wrist2_y = all_y_points[6,:].T
 df_exp_wrist2_z = all_z_points[6,:].T
 
+#the dataset in meters with shoulder zeroed to (0,0,0)
 df_exp_wrist2 = np.vstack((df_exp_wrist2_x, df_exp_wrist2_y, df_exp_wrist2_z)).T
 
 #%% Step2: Find the min and max for x,y,z values for wrist2/hand3 marker
@@ -217,7 +218,8 @@ axis_limit_max = wrist2_max_of_maxs + 2
 #the data up in 10cm blocks? So 2 decimal is like 1cm blocks. Gut.
 decimal_nums = 2
 
-#Round the data to 0.01 level
+#Round the data to 0.01m (1cm) level
+#dataset in meters, with shoulder centered to (0,0,0)
 df_exp_wrist2_rounded = df_exp_wrist2.round(decimals=decimal_nums)
 
 #break them back to X,Y,Z axis (why am I doing this)
@@ -248,6 +250,33 @@ and +wrist2_rounded_x(or whatever)_min.
 df_exp_wrist2_rounded_zeroed_x = (df_exp_wrist2_rounded[:,0] - wrist2_rounded_x_min)*(10**decimal_nums)
 df_exp_wrist2_rounded_zeroed_y = (df_exp_wrist2_rounded[:,1] - wrist2_rounded_y_min)*(10**decimal_nums)
 df_exp_wrist2_rounded_zeroed_z = (df_exp_wrist2_rounded[:,2] - wrist2_rounded_z_min)*(10**decimal_nums)
+
+"""
+So according to this, the shoulder marker (0,0,0) has been transfered to
+(0,-14,-27) in the "rounded_zeroed" version of the dataset. Since I've made
+all the values in the dataset larger than 0, it is impossible to plot the
+dataset purely (without any constraints) and show the shoulder marker at the
+same time. In that case, we should add 14 to all y datasets, and add 27 to all
+the values in z dataset. And thus, (0,0,0) would become the shoulder marker's
+relative position again.
+
+wrist2_rounded_x_min == 0
+wrist2_rounded_y_min == -0.14
+wrist2_rounded_z_min == -0.27
+
+So currently the (0,0,0) is
+x: (0 - 0)*100 = 0
+y: (0 - -0.14)*100 = 14
+z: (0 - -0.27)*100 = 27
+
+(0,14,27)
+"""
+#df_exp_wrist2_rounded_zeroed_y = df_exp_wrist2_rounded_zeroed_y + 14
+#df_exp_wrist2_rounded_zeroed_z = df_exp_wrist2_rounded_zeroed_z + 27
+
+df_exp_wrist2_rounded_zeroed_y = df_exp_wrist2_rounded_zeroed_y
+df_exp_wrist2_rounded_zeroed_z = df_exp_wrist2_rounded_zeroed_z
+
 
 df_exp_wrist2_rounded_zeroed_x = np.reshape(df_exp_wrist2_rounded_zeroed_x, (df_exp_wrist2_rounded_zeroed_x.shape[0],1))
 df_exp_wrist2_rounded_zeroed_y = np.reshape(df_exp_wrist2_rounded_zeroed_y, (df_exp_wrist2_rounded_zeroed_y.shape[0],1))
@@ -319,7 +348,7 @@ wrist2_right_XZ_axis_heatmap = np.zeros((int(max(x_lim)/block_size),int(max(z_li
 wrist2_up_XY_axis_heatmap = np.zeros((int(max(x_lim)/block_size),int(max(y_lim)/block_size)))
 wrist2_front_YZ_axis_heatmap = np.zeros((int(max(y_lim)/block_size),int(max(z_lim)/block_size)))
 
-#Count, from each side, how many times the wrist2 marker went through a box (2*2mm)
+#Count, from each side, how many times the wrist2 marker went through a box (1cm)
 for i in range(df_exp_wrist2_rounded_right_XZ.shape[0]):
     temp_x = int((df_exp_wrist2_rounded_right_XZ[i,0] + whole_plot_limit) / block_size)
     temp_z = int((df_exp_wrist2_rounded_right_XZ[i,1] + whole_plot_limit) / block_size)
@@ -347,35 +376,49 @@ for i in range(df_exp_wrist2_rounded_front_YZ.shape[0]):
 HOW-TO SNS HEATMAP: https://zhuanlan.zhihu.com/p/35494575
 """
 
-x_ticklabels = np.linspace(-50,80,27)
-y_ticklabels = np.linspace(70,-75,30)
+x_ticklabels = np.linspace(0,36,37)
+y_ticklabels = np.linspace(-14,28,44)
+z_ticklabels = np.linspace(-27,19,47)
+
+x_ticklabels = x_ticklabels.astype(int)
+y_ticklabels = y_ticklabels.astype(int)
+z_ticklabels = z_ticklabels.astype(int)
 
 font_medium = {'family' : 'normal',
         'weight' : 'bold',
         'size'   : 14}
 
 plt.figure()
+"""
+ax = sns.heatmap(np.flipud(wrist2_right_XZ_axis_heatmap.T), linewidth=0.5,cmap='Greens',square='True',xticklabels=x_ticklabels,yticklabels=z_ticklabels)
 #ax = sns.heatmap(np.flipud(wrist2_right_XZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
 #ax = sns.heatmap(np.flipud(wrist2_right_XZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels)
-#plt.xlabel('X axis (in cm)',**font_medium)
-#plt.ylabel('Y axis (in cm)',**font_medium)
-#plt.scatter(10,15,1000)
-#plt.title("Wrist2 Hand Position Heatmap Right->Left View",**font_medium)
+plt.xlabel('X axis (in cm)',**font_medium)
+plt.ylabel('Z axis (in cm)',**font_medium)
+plt.scatter(0,27,100)
+plt.title("Wrist2 Hand Position Heatmap Right->Left View",**font_medium)
+"""
 
+"""
+ax = sns.heatmap(np.flipud(wrist2_up_XY_axis_heatmap.T), linewidth=0.5,cmap='Greens',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
 #ax = sns.heatmap(np.flipud(wrist2_up_XY_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
 #ax = sns.heatmap(np.flipud(wrist2_up_XY_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels)
-#plt.xlabel('X axis (in cm)',**font_medium)
-#plt.ylabel('Y axis (in cm)',**font_medium)
-#plt.scatter(10,15,1000)
-#plt.title("Wrist2 Hand Position Heatmap Up->Down View",**font_medium)
-
-#ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
-ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,cmap='gist_gray_r',square='True')
-#ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels)
 plt.xlabel('X axis (in cm)',**font_medium)
 plt.ylabel('Y axis (in cm)',**font_medium)
-plt.scatter(10,15,1000)
+plt.scatter(0,14,100)
+plt.title("Wrist2 Hand Position Heatmap Up->Down View",**font_medium)
+"""
+
+
+ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,cmap='Greens',square='True',xticklabels=y_ticklabels,yticklabels=z_ticklabels)
+#ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
+#ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,cmap='gist_gray_r',square='True')
+#ax = sns.heatmap(np.flipud(wrist2 _front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels)
+plt.xlabel('Y axis (in cm)',**font_medium)
+plt.ylabel('Z axis (in cm)',**font_medium)
+plt.scatter(14,27,100)
 plt.title("Wrist2 Hand Position Heatmap Front->Back View",**font_medium)
+
 
 #ax2 = ax.twiny()
 
