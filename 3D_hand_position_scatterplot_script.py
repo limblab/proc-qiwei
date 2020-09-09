@@ -30,11 +30,115 @@ import seaborn as sns
 #%% Read in the file
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate4.csv')
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate7_copy.csv')
-df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
 
+df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
+f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\videos\Ground_truth_segments_20200804_FR.txt", "r") 
+
+df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
+f_2D = open(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt',"r")
+
+#%%Get the ground truth array for experiment trial segmentation
+
+frames_per_second = 25
+seconds_per_minute = 60
+
+def ground_truth_array_extraction(f):
+
+    ground_truth_experiment_segments = f.read()
+    f_temp = ground_truth_experiment_segments.split(" ")
+    f_seg = np.zeros((int(len(f_temp)/4),4))
+    
+    for i in range(len(f_seg)):
+        f_seg[i,0] = int(f_temp[i*4+0])
+        f_seg[i,1] = int(f_temp[i*4+1])
+        f_seg[i,2] = int(f_temp[i*4+2])
+        f_seg[i,3] = int(f_temp[i*4+3])
+    
+    f_second = np.zeros((len(f_seg),2))
+    
+    for i in range(len(f_second)):
+        f_second[i,0] = f_seg[i,0]*seconds_per_minute + f_seg[i,1]
+        f_second[i,1] = f_seg[i,2]*seconds_per_minute + f_seg[i,3]
+        
+    f_frame = f_second*frames_per_second
+    
+    #ground_truth_segment = np.zeros((len(df_speed)))
+    ground_truth_segment = np.zeros((df.shape[0]))
+    
+    f_frame_list = list()
+    
+    for i in range(len(f_frame)):
+        #f_frame_list.append(list(range(int(f_frame[i,0]),int(f_frame[i,1]+1))))
+        #print(list(range(int(f_frame[i,0]),int(f_frame[i,1]+1))))
+        f_frame_list = f_frame_list + list(range(int(f_frame[i,0]),int(f_frame[i,1]+1)))
+    
+    return f_frame_list
+        
+    #for i in range(len(f_frame_list)):
+    #    #print(i)
+    #    ground_truth_segment[f_frame_list[i]] = 1
+    
+
+
+#%%Define a trial segmentation function
+def experiment_trial_segment(df,ground_truth_list):
+    df2 = pd.DataFrame(np.zeros((0,df.shape[1])),columns = df.columns)
+    print(df2.shape)
+    for i in range(len(ground_truth_list)):
+        df2.loc[i] = df.iloc[ground_truth_list[i]]
+    #print(df2)
+    return df2
+
+#%% function to calculate speed marker by marker
+"""
+NOTE: The 3D Scatter plots are plotted in m/frame, but the speed is plotted in m/s.
+"""
+def speed_calc_3D(X,Y,Z,fps):
+    temp_df = np.empty((X.shape[0]))
+    temp_df[:] = np.nan
+    for i in range(X.shape[0]-1): #NOT SURE IF THIS IS GOING TO WORK
+        if not math.isnan(X[i]) and not math.isnan(X[i+1]): #if one of the three coordinates are not NaN, the other two will not be NaN
+            temp_speed = np.sqrt((X[i+1]-X[i])**2 + (Y[i+1]-Y[i])**2 + (Z[i+1]-Z[i])**2) #cm per second, BUT the numbers aren't right.
+            #temp_speed = np.sqrt((X[i+1]-X[i])**2 + (Y[i+1]-Y[i])**2 + (Z[i+1]-Z[i])**2)
+            temp_df[i] = temp_speed
+    #return temp_df/0.03333
+    return temp_df*fps#*1000/1e6
+
+#%%Segment/Separate the experiment trials out from this dataset, and convert the digits from mm to m
+f_frame_list_3D = ground_truth_array_extraction(f)
+df_exp_only = experiment_trial_segment(df, f_frame_list_3D)
+#df_exp_only = experiment_trial_segment(df, f_frame_list_3D)*1000/1e6
+df = df_exp_only
+
+f_frame_list_2D = ground_truth_array_extraction(f_2D)
+df_exp_only_2D = experiment_trial_segment(df_2D, f_frame_list_2D)
+#df_exp_only_2D = experiment_trial_segment(df, f_frame_list_3D)*1000/1e6
+df_2D = df_exp_only_2D
+
+
+#%% Read in the 2D reaching dataset to compare the hand speed with 3D dataset (TEMP)
+
+nframes_2D = len(df_2D)
+#list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','arm1_error','arm1_ncams','arm1_score','arm2_error','arm2_ncams','arm2_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
+#df_2D = df_2D.drop(columns = list_to_delete)
+#df_2D = df_2D.drop(df.index[[0,1,2,3,4]])
+df_np_2D = df_2D.to_numpy()*0.001
+df_speed_2D = np.zeros((df_np_2D.shape[0],math.floor(df_np_2D.shape[1]/3)))
+for i in range(df_speed_2D.shape[1]):
+    X = i*3 + 0
+    Y = i*3 + 1
+    Z = i*3 + 2
+    speed_3D_2D = speed_calc_3D(df_np_2D[:,X],df_np_2D[:,Y],df_np_2D[:,Z],25)
+    print(speed_3D_2D)
+    df_speed_2D[:,i] = speed_3D_2D
+
+where_are_NaNs = np.isnan(df_np_2D)
+df_np_2D[where_are_NaNs] = 0
+where_are_NaNs = np.isnan(df_speed_2D)
+df_speed_2D[where_are_NaNs] = 0
 #%% Pre-process the data, use the body makers that we only need
-nframes = len(df)
+
 
 #Previously used to determine which section of the video to take out from.
 #cfg["start"] should be something between 0 - 1, representing the starting (in percentage) of the video
@@ -69,32 +173,22 @@ ind = df_temp.index[(sum_ > epsilon ** 2).any(axis=1)].tolist()
 Indices.extend(ind)
 """
 
-list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','arm1_error','arm1_ncams','arm1_score','arm2_error','arm2_ncams','arm2_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
-df = df.drop(columns = list_to_delete)
 
 #%%Drop some rows that are useless
-df = df.drop(df.index[[0,1,2,3,4]])
 
 #%% initialize the arrays to put the speed parameters
-df_np = df.to_numpy()*0.001
 
+
+nframes = len(df)
+list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','arm1_error','arm1_ncams','arm1_score','arm2_error','arm2_ncams','arm2_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
+df = df.drop(columns = list_to_delete)
+df = df.drop(df.index[[0,1,2,3,4]])
+#df_np = df.to_numpy()*0.001 #in meters?
+df_np = df.to_numpy() #in meters?
 df_speed = np.zeros((df_np.shape[0],math.floor(df_np.shape[1]/3)))
 
 
-#%% function to calculate speed marker by marker
-"""
-NOTE: The 3D Scatter plots are plotted in m/frame, but the speed is plotted in m/s.
-"""
-def speed_calc_3D(X,Y,Z,fps):
-    temp_df = np.empty((X.shape[0]))
-    temp_df[:] = np.nan
-    for i in range(X.shape[0]-1): #NOT SURE IF THIS IS GOING TO WORK
-        if not math.isnan(X[i]) and not math.isnan(X[i+1]): #if one of the three coordinates are not NaN, the other two will not be NaN
-            temp_speed = np.sqrt((X[i+1]-X[i])**2 + (Y[i+1]-Y[i])**2 + (Z[i+1]-Z[i])**2) #cm per second, BUT the numbers aren't right.
-            #temp_speed = np.sqrt((X[i+1]-X[i])**2 + (Y[i+1]-Y[i])**2 + (Z[i+1]-Z[i])**2)
-            temp_df[i] = temp_speed
-    #return temp_df/0.03333
-    return temp_df*fps#*1000/1e6
+
 
 #%% use the function to calculate the distance
 for i in range(df_speed.shape[1]):
@@ -105,7 +199,7 @@ for i in range(df_speed.shape[1]):
     print(speed_3D)
     df_speed[:,i] = speed_3D
     
-#%% Scatter plot hand speed in 3D space
+#%% Plot wrist2 speed distribution heatmap with monkey shoulder as reference
 """
 So we need x,y,z,value for the point in the 3D space, and the speed value for the color
 for wrist2:
@@ -122,7 +216,7 @@ df_np[where_are_NaNs] = 0
 where_are_NaNs = np.isnan(df_speed)
 df_speed[where_are_NaNs] = 0
 
-#%% Plot wrist2 speed distribution heatmap with monkey shoulder as reference
+
 fig = plt.figure()
 ax = fig.add_subplot(111,projection="3d")
 cmap = plt.get_cmap("plasma")
@@ -149,25 +243,7 @@ must be in the form of an array of floats for cmap to apply, otherwise the
 default colour (in this case, jet) will continue to apply.
 """
 
-#%% Read in the 2D reaching dataset to compare the hand speed with 3D dataset (TEMP)
-df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
-nframes_2D = len(df_2D)
-df_2D = df_2D.drop(columns = list_to_delete)
-df_2D = df_2D.drop(df.index[[0,1,2,3,4]])
-df_np_2D = df_2D.to_numpy()*0.001
-df_speed_2D = np.zeros((df_np_2D.shape[0],math.floor(df_np_2D.shape[1]/3)))
-for i in range(df_speed.shape[1]):
-    X = i*3 + 0
-    Y = i*3 + 1
-    Z = i*3 + 2
-    speed_3D_2D = speed_calc_3D(df_np_2D[:,X],df_np_2D[:,Y],df_np_2D[:,Z],25)
-    print(speed_3D_2D)
-    df_speed_2D[:,i] = speed_3D_2D
 
-where_are_NaNs = np.isnan(df_np_2D)
-df_np_2D[where_are_NaNs] = 0
-where_are_NaNs = np.isnan(df_speed_2D)
-df_speed_2D[where_are_NaNs] = 0
 
 
 #%% Plot a histogram distribution of the hand speed for both 2D and 3D datasets
