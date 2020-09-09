@@ -94,7 +94,7 @@ def experiment_trial_segment(df,ground_truth_list):
     return df2
 
 
-#%% Step1-3: Segment/Separate the experiment trials out from this dataset 
+#%% Step1-3: Segment/Separate the experiment trials out from this dataset, and convert the digits from mm to m
 df_exp_only = experiment_trial_segment(df, f_frame_list)*1000/1e6
 #df_exp_only = experiment_trial_segment(df, f_frame_list)*frames_per_second*1000/1e6
 #df_exp_only = experiment_trial_segment(df, f_frame_list)*0.025
@@ -159,19 +159,31 @@ all_x_points = all_x_points - all_x_points[0,:]
 all_y_points = all_y_points - all_y_points[0,:]
 all_z_points = all_z_points - all_z_points[0,:]
 
-x_low, x_high = np.percentile(all_x_points[np.isfinite(all_x_points)], [3, 97])
-y_low, y_high = np.percentile(all_y_points[np.isfinite(all_y_points)], [3, 97])
-z_low, z_high = np.percentile(all_z_points[np.isfinite(all_z_points)], [3, 97])
+#x_low, x_high = np.percentile(all_x_points[np.isfinite(all_x_points)], [3, 97])
+#y_low, y_high = np.percentile(all_y_points[np.isfinite(all_y_points)], [3, 97])
+#z_low, z_high = np.percentile(all_z_points[np.isfinite(all_z_points)], [3, 97])
 
+x_lim_low, x_lim_high = np.percentile(all_x_points[np.isfinite(all_x_points)], [0, 100])
+y_lim_low, y_lim_high = np.percentile(all_y_points[np.isfinite(all_y_points)], [0, 100])
+z_lim_low, z_lim_high = np.percentile(all_z_points[np.isfinite(all_z_points)], [0, 100])
+
+x_lim_low_cm = int(x_lim_low*100)
+x_lim_high_cm = int(x_lim_high*100)
+y_lim_low_cm = int(y_lim_low*100)
+y_lim_high_cm = int(y_lim_high*100)
+z_lim_low_cm = int(z_lim_low*100)
+z_lim_high_cm = int(z_lim_high*100)
+"""
 x_lim_low = x_low-whole_plot_limit
 x_lim_high = x_high+whole_plot_limit
 y_lim_low = y_low-whole_plot_limit
 y_lim_high = y_high+whole_plot_limit
 z_lim_low = z_low-whole_plot_limit
 z_lim_high = z_high+whole_plot_limit
+"""
 
 
-#%% Step1-4 Again: Take wrist_2 out but with arrays instead of dataframes
+#%% Step1-4 Again: Take wrist_2 out but from arrays instead of dataframes
 df_exp_wrist2_x = all_x_points[6,:].T
 df_exp_wrist2_y = all_y_points[6,:].T
 df_exp_wrist2_z = all_z_points[6,:].T
@@ -186,7 +198,7 @@ and lower limits to create a 3D plot, but the values of the whole experiment spa
 recorded by the video. Try to use Min's plotting method as a reference of plotting
 such things
 """
-
+"""
 wrist2_mins = np.nanmin(df_exp_wrist2)
 wrist2_maxs = np.nanmax(df_exp_wrist2)
 
@@ -196,82 +208,137 @@ wrist2_max_of_maxs = wrist2_maxs.max()
 
 axis_limit_min = wrist2_min_of_mins - 2
 axis_limit_max = wrist2_max_of_maxs + 2
-
+"""
 
     
 #%% Step3-1: Count, for each block (x,y,z), how many markers are there throughout the whole experiment phase
 
 #Current unit should be in meters (m), so decimal_nums = 1 means that we round
-#the data up in 10cm blocks?
+#the data up in 10cm blocks? So 2 decimal is like 1cm blocks. Gut.
 decimal_nums = 2
 
+#Round the data to 0.01 level
 df_exp_wrist2_rounded = df_exp_wrist2.round(decimals=decimal_nums)
 
+#break them back to X,Y,Z axis (why am I doing this)
 wrist2_rounded_x_min = np.nanmin(df_exp_wrist2_rounded[:,0])
 wrist2_rounded_y_min = np.nanmin(df_exp_wrist2_rounded[:,1])
 wrist2_rounded_z_min = np.nanmin(df_exp_wrist2_rounded[:,2])
 
-df_exp_wrist2_rounded_zeroed_x = (df_exp_wrist2_rounded[:,0] - wrist2_rounded_x_min)*100
-df_exp_wrist2_rounded_zeroed_y = (df_exp_wrist2_rounded[:,1] - wrist2_rounded_y_min)*100
-df_exp_wrist2_rounded_zeroed_z = (df_exp_wrist2_rounded[:,2] - wrist2_rounded_z_min)*100
+#In order to squeeze the data ranging from -0.xx to 1.xx to a heatmap that
+#only requires the xy axis to have integers, I have to zero it so that the
+# negative numbers and decimals don't appear
+"""
+NOTE: Until here, the whole dataset is "zeroed" two times. The first one
+on line 116, we "shoulder_centered" the dataset. In other words, for each
+frame in the dataset, we use the original position value to subtract the
+shoulder value, so that the shoulder value in this "centered" dataset is always
+0, and the markers are moved based on the shoulder.
+For this one, it is zeroed according to another reason. In order to plot this
+heatmap in sns.heatmap, the coordinates on the x and y axis has to be non-neg
+integers. Like, I can change the corrdinates on the xy axis afterwards, but the
+dataset I will plot is basically a rectangle, each block having a value of the
+number or times the hand marker goes to this block. If we want to see what the
+markers' original positions were (relative to the shoulder), we can /(10^decimal_nums)
+and +wrist2_rounded_x(or whatever)_min.
+"""
+"""
+(15009,) min 0, max 38
+"""
+df_exp_wrist2_rounded_zeroed_x = (df_exp_wrist2_rounded[:,0] - wrist2_rounded_x_min)*(10**decimal_nums)
+df_exp_wrist2_rounded_zeroed_y = (df_exp_wrist2_rounded[:,1] - wrist2_rounded_y_min)*(10**decimal_nums)
+df_exp_wrist2_rounded_zeroed_z = (df_exp_wrist2_rounded[:,2] - wrist2_rounded_z_min)*(10**decimal_nums)
 
-heatmap_x_axis_length = int(np.nanmax(df_exp_wrist2_rounded_zeroed_x) - np.nanmin(df_exp_wrist2_rounded_zeroed_x) + 1)
-heatmap_y_axis_length = int(np.nanmax(df_exp_wrist2_rounded_zeroed_y) - np.nanmin(df_exp_wrist2_rounded_zeroed_y) + 1)
-heatmap_z_axis_length = int(np.nanmax(df_exp_wrist2_rounded_zeroed_z) - np.nanmin(df_exp_wrist2_rounded_zeroed_z) + 1)
+df_exp_wrist2_rounded_zeroed_x = np.reshape(df_exp_wrist2_rounded_zeroed_x, (df_exp_wrist2_rounded_zeroed_x.shape[0],1))
+df_exp_wrist2_rounded_zeroed_y = np.reshape(df_exp_wrist2_rounded_zeroed_y, (df_exp_wrist2_rounded_zeroed_y.shape[0],1))
+df_exp_wrist2_rounded_zeroed_z = np.reshape(df_exp_wrist2_rounded_zeroed_z, (df_exp_wrist2_rounded_zeroed_z.shape[0],1))
 
-wrist2_position_heatmap = np.zeros((heatmap_x_axis_length,heatmap_y_axis_length,heatmap_z_axis_length))
+#Set the heatmap axis based on the min and max of the dataset of each axis, +1 to make sure edge errors don't occur
+#heatmap_x_axis_length = int(np.nanmax(df_exp_wrist2_rounded_zeroed_x) - np.nanmin(df_exp_wrist2_rounded_zeroed_x) + 1)
+#heatmap_y_axis_length = int(np.nanmax(df_exp_wrist2_rounded_zeroed_y) - np.nanmin(df_exp_wrist2_rounded_zeroed_y) + 1)
+#heatmap_z_axis_length = int(np.nanmax(df_exp_wrist2_rounded_zeroed_z) - np.nanmin(df_exp_wrist2_rounded_zeroed_z) + 1)
 
-for i in range(df_exp_wrist2_rounded_zeroed_x.shape[0]):
-    wrist2_position_heatmap[int(df_exp_wrist2_rounded_zeroed_x[i]),int(df_exp_wrist2_rounded_zeroed_y[i]),int(df_exp_wrist2_rounded_zeroed_z[i])] += 1
+#Create an empty heatmap for counting how many markers there are per slot
+#wrist2_position_heatmap = np.zeros((heatmap_x_axis_length,heatmap_y_axis_length,heatmap_z_axis_length))
 
-    
-    
-    
-#%% Step3-2: Count in 2D how many markers are there in the right (XZ) plane
+#Count for each slot in the heatmap, how many markers there are
+#Even though this 3D heatmap is not used/useful right now
+#for i in range(df_exp_wrist2_rounded_zeroed_x.shape[0]):
+#    wrist2_position_heatmap[int(df_exp_wrist2_rounded_zeroed_x[i]),int(df_exp_wrist2_rounded_zeroed_y[i]),int(df_exp_wrist2_rounded_zeroed_z[i])] += 1
 
-df_exp_wrist2_rounded_right_XZ = np.delete(df_exp_wrist2_rounded,1,1)
-df_exp_wrist2_rounded_up_XY = np.delete(df_exp_wrist2_rounded,2,1)
-df_exp_wrist2_rounded_front_YZ = np.delete(df_exp_wrist2_rounded,0,1)
+#%% Step3-2: Plot in 2D for each plane
 
-lim_percentage = 1
+#df_exp_wrist2_rounded_right_XZ = np.delete(df_exp_wrist2_rounded,1,1)
+#df_exp_wrist2_rounded_up_XY = np.delete(df_exp_wrist2_rounded,2,1)
+#df_exp_wrist2_rounded_front_YZ = np.delete(df_exp_wrist2_rounded,0,1)
+
+df_exp_wrist2_rounded_right_XZ = np.append(df_exp_wrist2_rounded_zeroed_x,df_exp_wrist2_rounded_zeroed_z,axis=1)
+df_exp_wrist2_rounded_up_XY    = np.append(df_exp_wrist2_rounded_zeroed_x,df_exp_wrist2_rounded_zeroed_y,axis=1)
+df_exp_wrist2_rounded_front_YZ = np.append(df_exp_wrist2_rounded_zeroed_y,df_exp_wrist2_rounded_zeroed_z,axis=1)
+
+lim_percentage = 1 #I forgot what this is for
+
+block_size = 1 #centimeter on each side for each block of the heatmap
 
 #x_lim = int((x_lim_high - x_lim_low)*lim_percentage)
 #y_lim = int((y_lim_high - y_lim_low)*lim_percentage)
 #z_lim = int((z_lim_high - z_lim_low)*lim_percentage)
 
+"""
+I wrote this "step" variable, for a lazy fix. (Also I'm writing this long comment)
+just to make sure I can read what I was writing a few days/weeks ago. So I had
+this "decimal_nums" variable previously, trying to say how many decimals I will
+round the dataset to. So it's gonna be either meters(m), decimeters(dm) or
+centimeres(cm). But now, since we're going to use 2-3mm (acutally I'm just 
+going to do what I think is right for here and change it to 1 cm per block)as the side of 
+a block for the heatmap, it is hard to stick with this lazy method. So, we have
+to switch, and have a specialized variable to store the size of the block of
+this heatmap.
+"""
+"""
 if decimal_nums != 0:
     step = 1/(decimal_nums*10)
 else:
     step = 1
+"""
 
-x_lim = np.arange(int(x_lim_low*lim_percentage), int(x_lim_high*lim_percentage), step)
-y_lim = np.arange(int(y_lim_low*lim_percentage), int(y_lim_high*lim_percentage), step)
-z_lim = np.arange(int(z_lim_low*lim_percentage), int(z_lim_high*lim_percentage), step)
+#x_lim = np.arange(int(x_lim_low*lim_percentage), int(x_lim_high*lim_percentage), step)
+#y_lim = np.arange(int(y_lim_low*lim_percentage), int(y_lim_high*lim_percentage), step)
+#z_lim = np.arange(int(z_lim_low*lim_percentage), int(z_lim_high*lim_percentage), step)
 
-wrist2_right_XZ_axis_heatmap = np.zeros((int((x_lim_high-x_lim_low)*lim_percentage/step),int((z_lim_high-z_lim_low)*lim_percentage/step)))
-wrist2_up_XY_axis_heatmap = np.zeros((int((x_lim_high-x_lim_low)*lim_percentage/step),int((y_lim_high-y_lim_low)*lim_percentage/step)))
-wrist2_front_YZ_axis_heatmap = np.zeros((int((y_lim_high-y_lim_low)*lim_percentage/step),int((z_lim_high-z_lim_low)*lim_percentage/step))) 
+x_lim = np.arange(0, abs(x_lim_high_cm)+abs(x_lim_low_cm), block_size)
+y_lim = np.arange(0, abs(y_lim_high_cm)+abs(y_lim_low_cm), block_size)
+z_lim = np.arange(0, abs(z_lim_high_cm)+abs(z_lim_low_cm), block_size)
 
+#wrist2_right_XZ_axis_heatmap = np.zeros((int((x_lim_high-x_lim_low)*lim_percentage/step),int((z_lim_high-z_lim_low)*lim_percentage/step)))
+#wrist2_up_XY_axis_heatmap = np.zeros((int((x_lim_high-x_lim_low)*lim_percentage/step),int((y_lim_high-y_lim_low)*lim_percentage/step)))
+#wrist2_front_YZ_axis_heatmap = np.zeros((int((y_lim_high-y_lim_low)*lim_percentage/step),int((z_lim_high-z_lim_low)*lim_percentage/step))) 
+
+#Create heatmap from 3 sides, for counting
+wrist2_right_XZ_axis_heatmap = np.zeros((int(max(x_lim)/block_size),int(max(z_lim)/block_size)))
+wrist2_up_XY_axis_heatmap = np.zeros((int(max(x_lim)/block_size),int(max(y_lim)/block_size)))
+wrist2_front_YZ_axis_heatmap = np.zeros((int(max(y_lim)/block_size),int(max(z_lim)/block_size)))
+
+#Count, from each side, how many times the wrist2 marker went through a box (2*2mm)
 for i in range(df_exp_wrist2_rounded_right_XZ.shape[0]):
-    #temp_x = int((df_exp_wrist2_rounded_right_XZ[i,0] + whole_plot_limit) / step)
-    #temp_z = int((df_exp_wrist2_rounded_right_XZ[i,1] + whole_plot_limit) / step)
-    temp_x = int((df_exp_wrist2_rounded_right_XZ[i,0]) / step)
-    temp_z = int((df_exp_wrist2_rounded_right_XZ[i,1]) / step)
+    temp_x = int((df_exp_wrist2_rounded_right_XZ[i,0] + whole_plot_limit) / block_size)
+    temp_z = int((df_exp_wrist2_rounded_right_XZ[i,1] + whole_plot_limit) / block_size)
+    #temp_x = int((df_exp_wrist2_rounded_right_XZ[i,0]) / block_size)
+    #temp_z = int((df_exp_wrist2_rounded_right_XZ[i,1]) / block_size)
     wrist2_right_XZ_axis_heatmap[temp_x,temp_z] += 1
 
 for i in range(df_exp_wrist2_rounded_up_XY.shape[0]):
-    #temp_x = int((df_exp_wrist2_rounded_up_XY[i,0] + whole_plot_limit) / step)
-    #temp_y = int((df_exp_wrist2_rounded_up_XY[i,1] + whole_plot_limit) / step)
-    temp_x = int((df_exp_wrist2_rounded_up_XY[i,0]) / step)
-    temp_y = int((df_exp_wrist2_rounded_up_XY[i,1]) / step)
+    temp_x = int((df_exp_wrist2_rounded_up_XY[i,0] + whole_plot_limit) / block_size)
+    temp_y = int((df_exp_wrist2_rounded_up_XY[i,1] + whole_plot_limit) / block_size)
+    #temp_x = int((df_exp_wrist2_rounded_up_XY[i,0]) / block_size)
+    #temp_y = int((df_exp_wrist2_rounded_up_XY[i,1]) / block_size)
     wrist2_up_XY_axis_heatmap[temp_x,temp_y] += 1
-    #wrist2_up_XY_axis_heatmap[temp_y,temp_x] += 1
     
 for i in range(df_exp_wrist2_rounded_front_YZ.shape[0]):
-    temp_y = int((df_exp_wrist2_rounded_front_YZ[i,0] + whole_plot_limit) / step)
-    temp_z = int((df_exp_wrist2_rounded_front_YZ[i,1] + whole_plot_limit) / step)
-    #temp_y = int((df_exp_wrist2_rounded_front_YZ[i,0]) / step)
-    #temp_z = int((df_exp_wrist2_rounded_front_YZ[i,1]) / step)
+    temp_y = int((df_exp_wrist2_rounded_front_YZ[i,0] + whole_plot_limit) / block_size)
+    temp_z = int((df_exp_wrist2_rounded_front_YZ[i,1] + whole_plot_limit) / block_size)
+    #temp_y = int((df_exp_wrist2_rounded_front_YZ[i,0]) / block_size)
+    #temp_z = int((df_exp_wrist2_rounded_front_YZ[i,1]) / block_size)
     wrist2_front_YZ_axis_heatmap[temp_y,temp_z] += 1
     
 #wrist2_up_XY_axis_heatmap_reverse = (wrist2_up_XY_axis_heatmap * step) - whole_plot_limit
@@ -303,7 +370,7 @@ plt.figure()
 #plt.title("Wrist2 Hand Position Heatmap Up->Down View",**font_medium)
 
 #ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
-ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True')
+ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,cmap='gist_gray_r',square='True')
 #ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels)
 plt.xlabel('X axis (in cm)',**font_medium)
 plt.ylabel('Y axis (in cm)',**font_medium)
