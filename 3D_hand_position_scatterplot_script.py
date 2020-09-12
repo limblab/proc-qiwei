@@ -43,7 +43,7 @@ f_2D = open(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos
 frames_per_second = 25
 seconds_per_minute = 60
 
-def ground_truth_array_extraction(f):
+def ground_truth_array_extraction(f,df):
 
     ground_truth_experiment_segments = f.read()
     f_temp = ground_truth_experiment_segments.split(" ")
@@ -106,12 +106,12 @@ def speed_calc_3D(X,Y,Z,fps):
     return temp_df*fps#*1000/1e6
 
 #%%Segment/Separate the experiment trials out from this dataset, and convert the digits from mm to m
-f_frame_list_3D = ground_truth_array_extraction(f)
+f_frame_list_3D = ground_truth_array_extraction(f,df)
 df_exp_only = experiment_trial_segment(df, f_frame_list_3D)
 #df_exp_only = experiment_trial_segment(df, f_frame_list_3D)*1000/1e6
 df = df_exp_only
 
-f_frame_list_2D = ground_truth_array_extraction(f_2D)
+f_frame_list_2D = ground_truth_array_extraction(f_2D,df_2D)
 df_exp_only_2D = experiment_trial_segment(df_2D, f_frame_list_2D)
 #df_exp_only_2D = experiment_trial_segment(df, f_frame_list_3D)*1000/1e6
 df_2D = df_exp_only_2D
@@ -120,10 +120,15 @@ df_2D = df_exp_only_2D
 #%% Read in the 2D reaching dataset to compare the hand speed with 3D dataset (TEMP)
 
 nframes_2D = len(df_2D)
-#list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','arm1_error','arm1_ncams','arm1_score','arm2_error','arm2_ncams','arm2_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
-#df_2D = df_2D.drop(columns = list_to_delete)
-#df_2D = df_2D.drop(df.index[[0,1,2,3,4]])
+try:
+    list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','arm1_error','arm1_ncams','arm1_score','arm2_error','arm2_ncams','arm2_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
+    df_2D = df_2D.drop(columns = list_to_delete)
+    df_2D = df_2D.drop(df.index[[0,1,2,3,4]])
+except:
+    print("error line 128")
+    
 df_np_2D = df_2D.to_numpy()*0.001
+
 df_speed_2D = np.zeros((df_np_2D.shape[0],math.floor(df_np_2D.shape[1]/3)))
 for i in range(df_speed_2D.shape[1]):
     X = i*3 + 0
@@ -137,60 +142,23 @@ where_are_NaNs = np.isnan(df_np_2D)
 df_np_2D[where_are_NaNs] = 0
 where_are_NaNs = np.isnan(df_speed_2D)
 df_speed_2D[where_are_NaNs] = 0
-#%% Pre-process the data, use the body makers that we only need
 
 
-#Previously used to determine which section of the video to take out from.
-#cfg["start"] should be something between 0 - 1, representing the starting (in percentage) of the video
-#cfg["stop"] might also be the case, representing the ending (in percentage) of the video
-"""
-startindex = max([int(np.floor(nframes * cfg["start"])), 0])
-stopindex = min([int(np.ceil(nframes * cfg["stop"])), nframes])
-Index = np.arange(stopindex - startindex) + startindex
-"""
 
-#The code is from outlier_frames.py in deeplabcut. It's from a function inside so there are
-#native parameters inside the function. the parameter "bodyparts" is a native parameter in the
-#function, taking in a list of strings describing what bodyparts are needed as reference to
-#determine whether a whole frame is an outlier frame or not.
-"""
-df = df.iloc[Index]
-mask = df.columns.get_level_values("bodyparts").isin(bodyparts)
-df_temp = df.loc[:, mask]
-Indices = []
-"""
-
-#%% delete the unwanted parametres like the scores and static reference points
-#Reference from outlier_frames.py in the Deeplabcut project
-"""
-temp_dt = df_temp.diff(axis=0) ** 2
-temp_dt.drop("likelihood", axis=1, level=-1, inplace=True)
-#print(df_temp) #to delete, Qiwei
-#print(temp_dt) #to delete, Qiwei
-sum_ = temp_dt.sum(axis=1, level=1)
-#print(sum_) #to delete, Qiwei
-ind = df_temp.index[(sum_ > epsilon ** 2).any(axis=1)].tolist()
-Indices.extend(ind)
-"""
-
-
-#%%Drop some rows that are useless
-
-#%% initialize the arrays to put the speed parameters
 
 
 nframes = len(df)
-list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','arm1_error','arm1_ncams','arm1_score','arm2_error','arm2_ncams','arm2_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
-df = df.drop(columns = list_to_delete)
-df = df.drop(df.index[[0,1,2,3,4]])
+try:
+    list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','arm1_error','arm1_ncams','arm1_score','arm2_error','arm2_ncams','arm2_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
+    df = df.drop(columns = list_to_delete)
+    df = df.drop(df.index[[0,1,2,3,4]])
+except:
+    print("error line 154")
 #df_np = df.to_numpy()*0.001 #in meters?
-df_np = df.to_numpy() #in meters?
+    
+df_np = df.to_numpy()*0.001 #in meters?
+
 df_speed = np.zeros((df_np.shape[0],math.floor(df_np.shape[1]/3)))
-
-
-
-
-#%% use the function to calculate the distance
 for i in range(df_speed.shape[1]):
     X = i*3 + 0
     Y = i*3 + 1
@@ -198,6 +166,13 @@ for i in range(df_speed.shape[1]):
     speed_3D = speed_calc_3D(df_np[:,X],df_np[:,Y],df_np[:,Z],25)
     print(speed_3D)
     df_speed[:,i] = speed_3D
+    
+where_are_NaNs = np.isnan(df_np)
+df_np[where_are_NaNs] = 0
+where_are_NaNs = np.isnan(df_speed)
+df_speed[where_are_NaNs] = 0
+
+
     
 #%% Plot wrist2 speed distribution heatmap with monkey shoulder as reference
 """
@@ -208,19 +183,31 @@ y:df_np[:,19]
 z:df_np[:,20]
 speed: df_speed[:,6]
 """
-#where_are_NaNs = np.isnan(all_points)
-#all_points[where_are_NaNs] = 0
-where_are_NaNs = np.isnan(df_np)
-df_np[where_are_NaNs] = 0
-
-where_are_NaNs = np.isnan(df_speed)
-df_speed[where_are_NaNs] = 0
 
 
+#%% 20200912 TEMP Get Speed Data for 20 seconds for a plot
+"""
+This section is temporary. We're just taking 20 seconds of speed data from the 3D dataset
+The 20 seconds of data come from 1:00 - 1:20
+In frames (25fps) ir would be from frame 1500 - 2000
+The speed dataset is called "df_speed"
+the position dataset is called "df_np"
+wrist 2 is the 7th marker, if the markes are arranged in order starting from shoulder
+for wrist 2, the speed is df_speed[6]
+for wrist 2, the position is df_np[:,18:20]
+
+So for that specific section
+"""
+sec_speed = df_speed[1500:2000,6]
+sec_pos = df_np[1500:2000,18:21]
+
+
+
+#%%
 fig = plt.figure()
 ax = fig.add_subplot(111,projection="3d")
 cmap = plt.get_cmap("plasma")
-cax = ax.scatter(df_np[:,18],df_np[:,19],df_np[:,20],c=df_speed[:,6],s=1,cmap='plasma')
+cax = ax.scatter(df_np[:,18],df_np[:,19],df_np[:,20],c=df_speed[:,6],s=1,cmap='plasma',vmax=3)
 ax.scatter(0,0,0,'rp',s=500,c='r')
 ax.plot([0,0.2],[0,0],[0,0],linewidth=3,c='r')
 
@@ -257,9 +244,10 @@ default colour (in this case, jet) will continue to apply.
 
 x1 = df_speed_2D[:,6]
 x2 = df_speed[:,6]
+x2 = x2[x2<3]
 plt.figure()
-plt.hist(x1,alpha=0.5,label='2D')
-plt.hist(x2,alpha=0.5,label='3D')
+plt.hist(x1,alpha=0.5,label='2D',bins=100,histtype=u'step',linewidth = 3)
+plt.hist(x2,alpha=0.5,label='3D',bins=100,histtype=u'step',linewidth = 3)
 plt.xlabel("wirst2 marker speed")
 plt.ylabel("number of frames with such speed")
 plt.title("Comparing wirst2 speed between 2D and 3D dataset")
