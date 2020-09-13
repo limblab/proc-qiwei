@@ -188,6 +188,9 @@ speed: df_speed[:,6]
 
 pkl_3D = r'C:\Users\dongq\Desktop\Han\20200804\Neural_Data\Han_20200804_freeReach_leftS1_4cameras_joe_002.pkl'
 
+
+
+
 #%% 20200912 TEMP Get Speed Data for 20 seconds for a plot
 """
 This section is temporary. We're just taking 20 seconds of speed data from the 3D dataset
@@ -217,7 +220,9 @@ plt.show()
 fig = plt.figure()
 ax = fig.add_subplot(111,projection="3d")
 cmap = plt.get_cmap("plasma")
-cax = ax.scatter(df_np[:,18],df_np[:,19],df_np[:,20],c=df_speed[:,6],s=1,cmap='plasma',vmax=3)
+cax = ax.scatter(df_np[:,18],df_np[:,19],df_np[:,20],c=df_speed[:,6],s=5,cmap=cmap,vmax=1.2)
+plt.xlim(-0.05,0.23)
+plt.ylim(-0.05,0.35)
 ax.scatter(0,0,0,'rp',s=500,c='r')
 ax.plot([0,0.2],[0,0],[0,0],linewidth=3,c='r')
 
@@ -228,10 +233,15 @@ ax.plot([0,0.2],[0,0],[0,0],linewidth=3,c='r')
 #fig.colorbar(cb, ticks=np.linspace(0,2,N), 
 #             boundaries=np.arange(-0.05,2.1,.1))
 
-fig.colorbar(cax)
+cbar = plt.colorbar(cax)
+cbar.ax.get_yaxis().labelpad = 15
+cbar.ax.set_ylabel("m/s",rotation=270,)
+
 plt.xlabel("X Axis (in meters)")
 plt.ylabel("Y Axis (in meters)")
 plt.title("Wrist2 Movement Speed Heatmap")
+
+plt.rc('font', size=8)
 plt.show()
 
 """
