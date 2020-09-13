@@ -33,11 +33,11 @@ import seaborn as sns
 
 #%% Step 0: read in CSV
 
-#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
-#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt", "r") 
+df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
+f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt", "r") 
 
-df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
-f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\videos\Ground_truth_segments_20200804_FR.txt", "r") 
+#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
+#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\videos\Ground_truth_segments_20200804_FR.txt", "r") 
 
 """
 NOTICE:
@@ -390,35 +390,35 @@ font_medium = {'family' : 'normal',
 
 plt.figure()
 """
-ax = sns.heatmap(np.flipud(wrist2_right_XZ_axis_heatmap.T), linewidth=0.5,cmap='Greens',square='True',xticklabels=x_ticklabels,yticklabels=z_ticklabels)
+ax = sns.heatmap(np.flipud(wrist2_right_XZ_axis_heatmap.T), linewidth=0.5,cmap='Greens',square='True',xticklabels=x_ticklabels,yticklabels=z_ticklabels,vmax=100)
 #ax = sns.heatmap(np.flipud(wrist2_right_XZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
 #ax = sns.heatmap(np.flipud(wrist2_right_XZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels)
 plt.xlabel('X axis (in cm)',**font_medium)
 plt.ylabel('Z axis (in cm)',**font_medium)
-plt.scatter(0,27,100)
-plt.title("Wrist2 Hand Position Heatmap Right->Left View",**font_medium)
+#plt.scatter(0,27,100)
+plt.title("Wrist2 Hand Position Heatmap Side View",**font_medium)
 """
 
-"""
-ax = sns.heatmap(np.flipud(wrist2_up_XY_axis_heatmap.T), linewidth=0.5,cmap='Greens',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
+
+ax = sns.heatmap(np.flipud(wrist2_up_XY_axis_heatmap.T), linewidth=0.5,cmap='Greens',square='True',xticklabels=x_ticklabels,yticklabels=-y_ticklabels)
 #ax = sns.heatmap(np.flipud(wrist2_up_XY_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
 #ax = sns.heatmap(np.flipud(wrist2_up_XY_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels)
 plt.xlabel('X axis (in cm)',**font_medium)
 plt.ylabel('Y axis (in cm)',**font_medium)
-plt.scatter(0,14,100)
-plt.title("Wrist2 Hand Position Heatmap Up->Down View",**font_medium)
+#plt.scatter(0,14,100)
+plt.title("Wrist2 Hand Position Heatmap Top View",**font_medium)
+
+
 """
-
-
-ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,cmap='Greens',square='True',xticklabels=y_ticklabels,yticklabels=z_ticklabels)
+ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,cmap='Greens',square='True',xticklabels=y_ticklabels,yticklabels=z_ticklabels,vmax=80)
 #ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels,yticklabels=y_ticklabels)
 #ax = sns.heatmap(np.flipud(wrist2_front_YZ_axis_heatmap.T), linewidth=0.5,cmap='gist_gray_r',square='True')
 #ax = sns.heatmap(np.flipud(wrist2 _front_YZ_axis_heatmap.T), linewidth=0.5,annot=True,fmt ='.0f',cmap='gist_gray_r',square='True',xticklabels=x_ticklabels)
 plt.xlabel('Y axis (in cm)',**font_medium)
 plt.ylabel('Z axis (in cm)',**font_medium)
-plt.scatter(14,27,100)
-plt.title("Wrist2 Hand Position Heatmap Front->Back View",**font_medium)
-
+#plt.scatter(14,27,100)
+plt.title("Wrist2 Hand Position Heatmap Front View",**font_medium)
+"""
 
 #ax2 = ax.twiny()
 

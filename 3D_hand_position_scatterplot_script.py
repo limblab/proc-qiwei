@@ -27,6 +27,7 @@ from scipy import stats
 import copy
 from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
+import cage_data
 #%% Read in the file
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate4.csv')
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate7_copy.csv')
@@ -183,7 +184,9 @@ y:df_np[:,19]
 z:df_np[:,20]
 speed: df_speed[:,6]
 """
+#%% Get neural data from Pickle code
 
+pkl_3D = r'C:\Users\dongq\Desktop\Han\20200804\Neural_Data\Han_20200804_freeReach_leftS1_4cameras_joe_002.pkl'
 
 #%% 20200912 TEMP Get Speed Data for 20 seconds for a plot
 """
@@ -201,6 +204,13 @@ So for that specific section
 sec_speed = df_speed[1500:2000,6]
 sec_pos = df_np[1500:2000,18:21]
 
+fig = plt.figure()
+ax = fig.add_subplot(111,projection='3d')
+cmap = plt.get_cmap('plasma')
+cax = ax.scatter(sec_pos[:,0],sec_pos[:,1],sec_pos[:,2],c=sec_speed,s=100,cmap='plasma')
+#cax = ax.scatter(sec_pos[:,0],sec_pos[:,1],sec_pos[:,2],c=list(range(0,500)),s=100,cmap='plasma')
+fig.colorbar(cax)
+plt.show()
 
 
 #%%
