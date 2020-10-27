@@ -33,8 +33,11 @@ import seaborn as sns
 
 #%% Step 0: read in CSV
 
-df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
-f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt", "r") 
+df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\videos\Ground_truth_segments_2020-08-07-RT2D.txt", "r")
+
+#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
+#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt", "r") 
 
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
 #f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\videos\Ground_truth_segments_20200804_FR.txt", "r") 

@@ -28,17 +28,34 @@ import copy
 from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
 import cage_data
+from matplotlib.ticker import PercentFormatter
+import decimal
 #%% Read in the file
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate4.csv')
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate7_copy.csv')
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
 
-df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
-f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\videos\Ground_truth_segments_20200804_FR.txt", "r") 
+#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
+#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\videos\Ground_truth_segments_20200804_FR.txt", "r") 
 
-df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
-f_2D = open(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt',"r")
+#df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
+#f_2D = open(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt',"r")
 
+#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\videos\Ground_truth_segments_2020-08-07-RT2D.txt", "r")
+
+#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT3D\reconsturcted-3d-data\output_3d_data.csv')
+#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT3D\videos\Ground_truth_segments_2020-08-07-RT3D.txt", "r")
+
+#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt", "r")
+
+
+df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\reconsturcted-3d-data\output_3d_data.csv')
+f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\videos\Ground_truth_segments_2020-09-22-RT3D.txt", "r")
+
+df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+f_2D = open(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt',"r")
 #%%Get the ground truth array for experiment trial segmentation
 
 frames_per_second = 25
@@ -186,8 +203,36 @@ speed: df_speed[:,6]
 """
 #%% Get neural data from Pickle code
 
-pkl_3D = r'C:\Users\dongq\Desktop\Han\20200804\Neural_Data\Han_20200804_freeReach_leftS1_4cameras_joe_002.pkl'
+#pkl_3D = r'C:\Users\dongq\Desktop\Han\20200804\Neural_Data\Han_20200804_freeReach_leftS1_4cameras_joe_002.pkl'
 
+
+#%% Pre-set plotting values
+
+
+sample_session_start = 300 #in seconds
+sample_session_end = 320 #in seconds
+sample_start_frame = sample_session_start * frames_per_second
+sample_end_frame = sample_session_end * frames_per_second
+
+sample_session_start_2D = 400 #in seconds
+sample_session_end_2D = 420 #in seconds
+sample_start_frame_2D = sample_session_start_2D * frames_per_second
+sample_end_frame_2D = sample_session_end_2D * frames_per_second
+
+
+font = {'family' : 'normal',
+#        'weight' : 'bold',
+        'size'   : 22}
+
+font_medium = {'family' : 'normal',
+ #       'weight' : 'bold',
+        'size'   : 16}
+
+X = np.linspace(0,df_speed.shape[0]-1,df_speed.shape[0])/frames_per_second
+small_X = list(np.linspace(sample_session_start,sample_session_end,(sample_session_end-sample_session_start)*frames_per_second))
+
+X_2D = np.linspace(0,df_speed_2D.shape[0]-1,df_speed_2D.shape[0])/frames_per_second
+small_X_2D = list(np.linspace(sample_session_start_2D,sample_session_end_2D,(sample_session_end_2D-sample_session_start_2D)*frames_per_second))
 
 
 
@@ -216,11 +261,14 @@ fig.colorbar(cax)
 plt.show()
 
 
-#%%
+#%% 3D Scatter speed & location plot
 fig = plt.figure()
 ax = fig.add_subplot(111,projection="3d")
-cmap = plt.get_cmap("plasma")
+cmap = plt.get_cmap("jet")
+
+#cax = ax.scatter(df_np_2D[:,18],df_np_2D[:,19],df_np_2D[:,20],c=df_speed_2D[:,6],s=5,cmap=cmap,vmax=0.5)
 cax = ax.scatter(df_np[:,18],df_np[:,19],df_np[:,20],c=df_speed[:,6],s=5,cmap=cmap,vmax=1.2)
+
 plt.xlim(-0.05,0.23)
 plt.ylim(-0.05,0.35)
 ax.scatter(0,0,0,'rp',s=500,c='r')
@@ -235,13 +283,16 @@ ax.plot([0,0.2],[0,0],[0,0],linewidth=3,c='r')
 
 cbar = plt.colorbar(cax)
 cbar.ax.get_yaxis().labelpad = 15
-cbar.ax.set_ylabel("m/s",rotation=270,)
+cbar.ax.set_ylabel("m/s",rotation=270,**font_medium)
 
-plt.xlabel("X Axis (in meters)")
-plt.ylabel("Y Axis (in meters)")
-plt.title("Wrist2 Movement Speed Heatmap")
+plt.xlabel("X Axis (in meters)",**font_medium,labelpad=15)
+plt.ylabel("Y Axis (in meters)",**font_medium,labelpad=15)
+plt.title("Wrist2 Movement Speed Heatmap",**font_medium)
 
-plt.rc('font', size=8)
+plt.xticks(fontsize=16)
+plt.yticks(fontsize=16)
+
+plt.rc('font', size=16)
 plt.show()
 
 """
@@ -262,15 +313,46 @@ default colour (in this case, jet) will continue to apply.
 3D wrist2 speed: df_speed[:,6]
 """
 
+
+plt.figure(figsize=(9,6))
+
+"""
+Uncomment line 283 and 284 if you have 2D data
+"""
+
+bin_size = 50
 x1 = df_speed_2D[:,6]
+x1_limited = x1[x1<3]
+#plt.hist(x1,alpha=0.5,label='2D',bins=50,histtype=u'step',linewidth = 3)
+#plt.hist(x1_limited,alpha=0.5,label='2D ' + str(x1_limited.shape[0]) + ' frames',bins=50,histtype=u'step',linewidth = 3)
+#plt.hist(x1_limited,density=True,bins=100,alpha=0.5,linewidth=3,label='2D ' + str(x1_limited.shape[0]) + ' frames',histtype=u'step')
+
+#D = decimal.Decimal
+#N = 100
+#data_2D = [D(str(item)) for item in np.random.random(N)]
+
+
+plt.hist(x1_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='2D ',histtype='step',linewidth = 3)
+
 x2 = df_speed[:,6]
-x2 = x2[x2<3]
-plt.figure()
-plt.hist(x1,alpha=0.5,label='2D',bins=100,histtype=u'step',linewidth = 3)
-plt.hist(x2,alpha=0.5,label='3D',bins=100,histtype=u'step',linewidth = 3)
-plt.xlabel("wirst2 marker speed")
-plt.ylabel("number of frames with such speed")
-plt.title("Comparing wirst2 speed between 2D and 3D dataset")
+x2_limited = x2[x2<3]
+#x2 = x2[x2<3]
+#plt.hist(x2,alpha=0.5,label='3D',bins=15,histtype=u'step',linewidth = 3)
+#plt.hist(x2_limited,density=True,alpha=0.5,label='3D ' + str(x2_limited.shape[0]) + ' frames',bins=50,histtype=u'step',linewidth = 3)
+
+plt.hist(x2_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='3D ',histtype='step',linewidth = 3)
+
+
+plt.xlabel("wirst2 marker speed (in m/s)",**font_medium)
+plt.ylabel("number of frames",**font_medium)
+plt.title("Comparing wirst2 speed between 2D and 3D dataset",**font_medium)
+#plt.title("Wrist2 speed distribution",**font_medium)
+
+
+plt.xticks(fontsize = 16)
+plt.yticks(fontsize = 16)
+
+plt.gca().yaxis.set_major_formatter(PercentFormatter(bin_size))
 plt.legend()
 plt.show()
 
@@ -278,23 +360,37 @@ print(np.mean(x1))
 print(np.mean(x2))
 
 #%% plot the speed data
-X = np.linspace(0,df_speed.shape[0]-1,df_speed.shape[0])/30
-font = {'family' : 'normal',
-        'weight' : 'bold',
-        'size'   : 22}
 
-font_medium = {'family' : 'normal',
-        'weight' : 'bold',
-        'size'   : 14}
+
+
+
 
 T = range(df_speed.shape[0])
 
-plt.figure()
-plt.ylim(0,10)
-for i in range(df_speed.shape[1]):
-    plt.plot(X,df_speed[:,i])
 
-plt.xlabel("time (in frames)",**font_medium)
+plt.figure(figsize=(12,5))
+#plt.ylim(0,10)
+#for i in range(df_speed.shape[1]):
+#    plt.plot(X,df_speed[:,i])
+plt.subplot(211)
+plt.ylim(0,2)
+plt.plot(small_X_2D,df_speed_2D[sample_start_frame_2D:sample_end_frame_2D,6],label='2D')
+plt.xlabel("time (in seconds)",**font_medium)
 plt.ylabel("speed (in m/s)",**font_medium)
-plt.title("Raw data plot for all markers",**font_medium)
+plt.title("Section of raw speed plot for marker wrist2 in RT2D and RT3D task",**font_medium)
+plt.legend()
+
+plt.subplot(212)
+plt.ylim(0,2)
+plt.plot(small_X,df_speed[sample_start_frame:sample_end_frame,6],label='3D',color='r')
+plt.xlabel("time (in seconds)",**font_medium)
+plt.ylabel("speed (in m/s)",**font_medium)
+plt.legend()
+#plt.title("Raw speed plot for marker wrist2",**font_medium)
+#plt.plot(df_speed_2D[:,6])
+#plt.plot(X,df_speed[:,6])
+
+
+plt.xticks(fontsize = 16)
+plt.yticks(fontsize = 16)
 plt.show()

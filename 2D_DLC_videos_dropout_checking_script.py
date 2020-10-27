@@ -49,12 +49,27 @@ def count_non_confident_points(df):
 #f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\videos\Ground_truth_segments_20200804_FR.txt", "r") 
 
 
-cam1 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\exp00001DLC_resnet50_HanAug4shuffle1_1030000filtered.h5')
-cam2 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\exp00002DLC_resnet50_HanAug4shuffle1_1030000filtered.h5')
-cam3 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\exp00003DLC_resnet50_HanAug4shuffle1_1030000filtered.h5')
-cam4 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\exp00004DLC_resnet50_HanAug4shuffle1_1030000filtered.h5')
+#cam1 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\exp00001DLC_resnet50_HanAug4shuffle1_1030000filtered.h5')
+#cam2 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\exp00002DLC_resnet50_HanAug4shuffle1_1030000filtered.h5')
+#cam3 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\exp00003DLC_resnet50_HanAug4shuffle1_1030000filtered.h5')
+#cam4 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\exp00004DLC_resnet50_HanAug4shuffle1_1030000filtered.h5')
 
-f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt", "r") 
+#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt", "r") 
+
+#cam1 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00017DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+#cam2 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00018DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+#cam3 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00019DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+#cam4 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00020DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+
+#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt", "r") 
+
+
+cam1 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00017DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+cam2 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00018DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+cam3 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00019DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+cam4 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00020DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+
+f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt", "r") 
 
 
 #%% Trial segmenting function
@@ -67,62 +82,81 @@ def experiment_trial_segment(df,ground_truth_list):
 
 
 #%% Get the array for trial segmentation
-if experiment_phase_only == 1:
+#if experiment_phase_only == 1:
     #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
     
     
-    frames_per_second = 25
-    seconds_per_minute = 60
-    
-    ground_truth_experiment_segments = f.read()
-    f_temp = ground_truth_experiment_segments.split(" ")
-    f_seg = np.zeros((int(len(f_temp)/4),4))
-    
-    for i in range(len(f_seg)):
-        f_seg[i,0] = int(f_temp[i*4+0])
-        f_seg[i,1] = int(f_temp[i*4+1])
-        f_seg[i,2] = int(f_temp[i*4+2])
-        f_seg[i,3] = int(f_temp[i*4+3])
-    
-    f_second = np.zeros((len(f_seg),2))
-    
-    for i in range(len(f_second)):
-        f_second[i,0] = f_seg[i,0]*seconds_per_minute + f_seg[i,1]
-        f_second[i,1] = f_seg[i,2]*seconds_per_minute + f_seg[i,3]
-        
-    f_frame = f_second*frames_per_second
-    
-    #ground_truth_segment = np.zeros((len(df_speed)))
+frames_per_second = 25
+seconds_per_minute = 60
 
+ground_truth_experiment_segments = f.read()
+f_temp = ground_truth_experiment_segments.split(" ")
+f_seg = np.zeros((int(len(f_temp)/4),4))
+
+for i in range(len(f_seg)):
+    f_seg[i,0] = int(f_temp[i*4+0])
+    f_seg[i,1] = int(f_temp[i*4+1])
+    f_seg[i,2] = int(f_temp[i*4+2])
+    f_seg[i,3] = int(f_temp[i*4+3])
+
+f_second = np.zeros((len(f_seg),2))
+
+for i in range(len(f_second)):
+    f_second[i,0] = f_seg[i,0]*seconds_per_minute + f_seg[i,1]
+    f_second[i,1] = f_seg[i,2]*seconds_per_minute + f_seg[i,3]
     
-    f_frame_list = list()
-    
-    for i in range(len(f_frame)):
-        f_frame_list = f_frame_list + list(range(int(f_frame[i,0]),int(f_frame[i,1]+1)))
+f_frame = f_second*frames_per_second
+
+#ground_truth_segment = np.zeros((len(df_speed)))
+
+
+f_frame_list = list()
+
+for i in range(len(f_frame)):
+    f_frame_list = f_frame_list + list(range(int(f_frame[i,0]),int(f_frame[i,1]+1)))
         
-    #ground_truth_segment = np.zeros((cam1.shape[0]))        
-    #for i in range(len(f_frame_list)):
-    #    #print(i)
-    #    ground_truth_segment[f_frame_list[i]] = 1
+#%% get ground truth segment 
+        
+ground_truth_segment = np.zeros((cam1.shape[0]))        
+for i in range(len(f_frame_list)):
+    #print(i)
+    ground_truth_segment[f_frame_list[i]] = 1
     
 #%%
+        
+#TEMP 20201002: SET CAM1_EXP_ONLY TO FULL EXPERIMENT FOR PLOTTING EASYNESS, FIX THIS AND ADD ANOTHER PARAMETER FOR
+        #WHOLE DATASET AFTER MEETING
+        
+
+#cam1_exp_only = cam1
+#cam2_exp_only = cam2
+#cam3_exp_only = cam3
+#cam4_exp_only = cam4
+
+        
+
 cam1_exp_only = experiment_trial_segment(cam1,f_frame_list)
 cam2_exp_only = experiment_trial_segment(cam2,f_frame_list)
 cam3_exp_only = experiment_trial_segment(cam3,f_frame_list)
 cam4_exp_only = experiment_trial_segment(cam4,f_frame_list)
+
     
 #%%
-"""
-cam1_dropouts = count_non_confident_points(cam1)
-cam2_dropouts = count_non_confident_points(cam2)
-cam3_dropouts = count_non_confident_points(cam3)
-cam4_dropouts = count_non_confident_points(cam4)
-"""
+
+cam1_dropouts_whole_dataset = count_non_confident_points(cam1)
+cam2_dropouts_whole_dataset = count_non_confident_points(cam2)
+cam3_dropouts_whole_dataset = count_non_confident_points(cam3)
+cam4_dropouts_whole_dataset = count_non_confident_points(cam4)
+
 cam1_dropouts = count_non_confident_points(cam1_exp_only)
 cam2_dropouts = count_non_confident_points(cam2_exp_only)
 cam3_dropouts = count_non_confident_points(cam3_exp_only)
 cam4_dropouts = count_non_confident_points(cam4_exp_only)
 
+print("\n Dropout frames of the whole dataset (row=each cam, col = each marker)")
+print(cam1_dropouts_whole_dataset,'\n',cam2_dropouts_whole_dataset,'\n',cam3_dropouts_whole_dataset,'\n',cam4_dropouts_whole_dataset)
+
+print("\n Dropout frames of experiment phae in the dataset (row=each cam, col = each marker)")
 print(cam1_dropouts,'\n',cam2_dropouts,'\n',cam3_dropouts,'\n',cam4_dropouts)
 
 
@@ -184,7 +218,6 @@ arm1_cam3 =  cam3_likelihood.xs('arm1',level='bodyparts',axis=1)
 arm1_cam4 =  cam4_likelihood.xs('arm1',level='bodyparts',axis=1)
 arm1_unseen_points = count_hard_to_see_points(arm1_cam1,arm1_cam2,arm1_cam3,arm1_cam4)
 
-
 arm2_cam1 =  cam1_likelihood.xs('arm2',level='bodyparts',axis=1)
 arm2_cam2 =  cam2_likelihood.xs('arm2',level='bodyparts',axis=1)
 arm2_cam3 =  cam3_likelihood.xs('arm2',level='bodyparts',axis=1)
@@ -196,7 +229,6 @@ elbow1_cam2 = cam2_likelihood.xs('elbow1',level='bodyparts',axis=1)
 elbow1_cam3 = cam3_likelihood.xs('elbow1',level='bodyparts',axis=1)
 elbow1_cam4 = cam4_likelihood.xs('elbow1',level='bodyparts',axis=1)
 elbow1_unseen_points = count_hard_to_see_points(elbow1_cam1,elbow1_cam2,elbow1_cam3,elbow1_cam4)
-
 
 elbow2_cam1 = cam1_likelihood.xs('elbow2',level='bodyparts',axis=1)
 elbow2_cam2 = cam2_likelihood.xs('elbow2',level='bodyparts',axis=1)
@@ -234,216 +266,79 @@ hand3_cam3 = cam3_likelihood.xs('hand3',level='bodyparts',axis=1)
 hand3_cam4 = cam4_likelihood.xs('hand3',level='bodyparts',axis=1)
 hand3_unseen_points = count_hard_to_see_points(hand3_cam1,hand3_cam2,hand3_cam3,hand3_cam4)
 
+#%% Set the plotting parameters
 
-#%% Subplot the likelihood cam1 20200819
+font = {'family' : 'normal',
+#        'weight' : 'bold',
+        'size'   : 8}
 
-X = np.linspace(0,arm1_cam1.shape[0]-1,arm1_cam1.shape[0])/25
-#fig, ax = plt.subplots(nrows=10, ncols=1)
-fig=plt.figure()
-plt.title("20200804_Han_FreeReaching_Cam1_DLC_Tracing_Probability_Exp_Only")
-ax = fig.add_subplot(11,1,1)
-ax.plot(X,shoulder1_cam1)
-plt.ylabel("shoulder1")
-ax.legend()
-ax = fig.add_subplot(11,1,2)
-ax.plot(X,arm1_cam1)
-plt.ylabel("arm1")
-ax.legend()
-ax = fig.add_subplot(11,1,3)
-ax.plot(X,arm2_cam1)
-plt.ylabel("arm2")
-ax.legend()
-ax = fig.add_subplot(11,1,4)
-ax.plot(X,elbow1_cam1)
-plt.ylabel("elbow1")
-ax.legend()
-ax = fig.add_subplot(11,1,5)
-ax.plot(X,elbow2_cam1)
-plt.ylabel("elbow2")
-ax.legend()
-ax = fig.add_subplot(11,1,6)
-ax.plot(X,wrist1_cam1)
-plt.ylabel("wrist1")
-ax.legend()
-ax = fig.add_subplot(11,1,7)
-ax.plot(X,wrist2_cam1)
-plt.ylabel("wrist2")
-ax.legend()
-ax = fig.add_subplot(11,1,8)
-ax.plot(X,hand1_cam1)
-plt.ylabel("hand1")
-ax.legend()
-ax = fig.add_subplot(11,1,9)
-ax.plot(X,hand2_cam1)
-plt.ylabel("hand2")
-ax.legend()
-ax = fig.add_subplot(11,1,10)
-ax.plot(X,hand3_cam1)
-plt.ylabel("hand3")
-ax.legend()
-#ax = fig.add_subplot(11,1,11)
-#ax.plot(X,ground_truth_segment)
-#plt.ylabel("ground_truth")
-#ax.legend()
-plt.xlabel("seconds")
+font_medium = {'family' : 'normal',
+ #       'weight' : 'bold',
+        'size'   : 8}
 
-#%% Subplot the likelihood cam2 20200819
+#%% Plot line plots for the likelihood distribution of all 4 cameras
 
-X = np.linspace(0,arm1_cam1.shape[0]-1,arm1_cam1.shape[0])/25
-#fig, ax = plt.subplots(nrows=10, ncols=1)
-fig=plt.figure()
-plt.title("20200804_Han_FreeReaching_Cam2_DLC_Tracing_Probability_Exp_Only")
-ax = fig.add_subplot(11,1,1)
-ax.plot(X,shoulder1_cam2)
-plt.ylabel("shoulder1")
-ax.legend()
-ax = fig.add_subplot(11,1,2)
-ax.plot(X,arm1_cam2)
-plt.ylabel("arm1")
-ax.legend()
-ax = fig.add_subplot(11,1,3)
-ax.plot(X,arm2_cam2)
-plt.ylabel("arm2")
-ax.legend()
-ax = fig.add_subplot(11,1,4)
-ax.plot(X,elbow1_cam2)
-plt.ylabel("elbow1")
-ax.legend()
-ax = fig.add_subplot(11,1,5)
-ax.plot(X,elbow2_cam2)
-plt.ylabel("elbow2")
-ax.legend()
-ax = fig.add_subplot(11,1,6)
-ax.plot(X,wrist1_cam2)
-plt.ylabel("wrist1")
-ax.legend()
-ax = fig.add_subplot(11,1,7)
-ax.plot(X,wrist2_cam2)
-plt.ylabel("wrist2")
-ax.legend()
-ax = fig.add_subplot(11,1,8)
-ax.plot(X,hand1_cam2)
-plt.ylabel("hand1")
-ax.legend()
-ax = fig.add_subplot(11,1,9)
-ax.plot(X,hand2_cam2)
-plt.ylabel("hand2")
-ax.legend()
-ax = fig.add_subplot(11,1,10)
-ax.plot(X,hand3_cam2)
-plt.ylabel("hand3")
-ax.legend()
-#ax = fig.add_subplot(11,1,11)
-#ax.plot(X,ground_truth_segment)
-#plt.ylabel("ground_truth")
-#ax.legend()
-plt.xlabel("seconds")
+marker_name_list = ['shoulder1','arm1','arm2','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3']
+marker_pos_list_cam1 = [shoulder1_cam1,arm1_cam1,arm2_cam1,elbow1_cam1,elbow2_cam1,wrist1_cam1,wrist2_cam1,hand1_cam1,hand2_cam1,hand3_cam1]
+marker_pos_list_cam2 = [shoulder1_cam2,arm1_cam2,arm2_cam2,elbow1_cam2,elbow2_cam2,wrist1_cam2,wrist2_cam2,hand1_cam2,hand2_cam2,hand3_cam2]
+marker_pos_list_cam3 = [shoulder1_cam3,arm1_cam3,arm2_cam3,elbow1_cam3,elbow2_cam3,wrist1_cam3,wrist2_cam3,hand1_cam3,hand2_cam3,hand3_cam3]
+marker_pos_list_cam4 = [shoulder1_cam4,arm1_cam4,arm2_cam4,elbow1_cam4,elbow2_cam4,wrist1_cam4,wrist2_cam4,hand1_cam4,hand2_cam4,hand3_cam4]
 
-#%% Subplot the likelihood cam3 20200819
+marker_pos_list = [marker_pos_list_cam1,marker_pos_list_cam2,marker_pos_list_cam3,marker_pos_list_cam4]
+X_axis_ref_list = [arm1_cam1,arm1_cam2,arm1_cam3,arm1_cam4]
 
-X = np.linspace(0,arm1_cam1.shape[0]-1,arm1_cam1.shape[0])/25
-#fig, ax = plt.subplots(nrows=10, ncols=1)
-fig=plt.figure()
-plt.title("20200804_Han_FreeReaching_Cam3_DLC_Tracing_Probability_Exp_Only")
-ax = fig.add_subplot(11,1,1)
-ax.plot(X,shoulder1_cam3)
-plt.ylabel("shoulder1")
-ax.legend()
-ax = fig.add_subplot(11,1,2)
-ax.plot(X,arm1_cam3)
-plt.ylabel("arm1")
-ax.legend()
-ax = fig.add_subplot(11,1,3)
-ax.plot(X,arm2_cam3)
-plt.ylabel("arm2")
-ax.legend()
-ax = fig.add_subplot(11,1,4)
-ax.plot(X,elbow1_cam3)
-plt.ylabel("elbow1")
-ax.legend()
-ax = fig.add_subplot(11,1,5)
-ax.plot(X,elbow2_cam3)
-plt.ylabel("elbow2")
-ax.legend()
-ax = fig.add_subplot(11,1,6)
-ax.plot(X,wrist1_cam3)
-plt.ylabel("wrist1")
-ax.legend()
-ax = fig.add_subplot(11,1,7)
-ax.plot(X,wrist2_cam3)
-plt.ylabel("wrist2")
-ax.legend()
-ax = fig.add_subplot(11,1,8)
-ax.plot(X,hand1_cam3)
-plt.ylabel("hand1")
-ax.legend()
-ax = fig.add_subplot(11,1,9)
-ax.plot(X,hand2_cam3)
-plt.ylabel("hand2")
-ax.legend()
-ax = fig.add_subplot(11,1,10)
-ax.plot(X,hand3_cam3)
-plt.ylabel("hand3")
-ax.legend()
-#ax = fig.add_subplot(11,1,11)
-#ax.plot(X,ground_truth_segment)
-#plt.ylabel("ground_truth")
-#ax.legend()
-plt.xlabel("seconds")
+for i in range(len(marker_pos_list)):
+    for j in range(len(marker_pos_list[i])):
+        marker_pos_list[i][j] = marker_pos_list[i][j].values.tolist()
 
-#%% Subplot the likelihood cam4 20200819
 
-#fig, ax = plt.subplots(nrows=10, ncols=1)
-fig=plt.figure()
-plt.title("20200804_Han_FreeReaching_Cam4_DLC_Tracing_Probability_Exp_Only")
-ax = fig.add_subplot(11,1,1)
-ax.plot(X,shoulder1_cam4)
-plt.ylabel("shoulder1")
-ax.legend()
-ax = fig.add_subplot(11,1,2)
-ax.plot(X,arm1_cam4)
-plt.ylabel("arm1")
-ax.legend()
-ax = fig.add_subplot(11,1,3)
-ax.plot(X,arm2_cam4)
-plt.ylabel("arm2")
-ax.legend()
-ax = fig.add_subplot(11,1,4)
-ax.plot(X,elbow1_cam4)
-plt.ylabel("elbow1")
-ax.legend()
-ax = fig.add_subplot(11,1,5)
-ax.plot(X,elbow2_cam4)
-plt.ylabel("elbow2")
-ax.legend()
-ax = fig.add_subplot(11,1,6)
-ax.plot(X,wrist1_cam4)
-plt.ylabel("wrist1")
-ax.legend()
-ax = fig.add_subplot(11,1,7)
-ax.plot(X,wrist2_cam4)
-plt.ylabel("wrist2")
-ax.legend()
-ax = fig.add_subplot(11,1,8)
-ax.plot(X,hand1_cam4)
-plt.ylabel("hand1")
-ax.legend()
-ax = fig.add_subplot(11,1,9)
-ax.plot(X,hand2_cam4)
-plt.ylabel("hand2")
-ax.legend()
-ax = fig.add_subplot(11,1,10)
-ax.plot(X,hand3_cam4)
-plt.ylabel("hand3")
-ax.legend()
-#ax = fig.add_subplot(11,1,11)
-#ax.plot(X,ground_truth_segment)
-#plt.ylabel("ground_truth")
-#ax.legend()
-plt.xlabel("seconds")
+"""
+!!!: If you want to plot a section of the data, set the start and end frame number here
+"""
+start_frame = 0
+end_frame = len(marker_pos_list_cam4[0])
 
+start_frame = 200*25
+end_frame = 220*25
+
+num_of_markers = len(marker_name_list)
+
+#fig, ax = plt.subplots(nrows=11, ncols=1)
+
+
+for j in range (len(marker_pos_list)):
+    
+    X = np.linspace(0,X_axis_ref_list[j].shape[0]-1,X_axis_ref_list[j].shape[0])/25
+    fig=plt.figure()
+    for i in range(num_of_markers):
+        if i == 1:
+            plt.title("20200922_Han_RT2D_Cam" + str(j+1) + "_DLC_Tracing_Probability")
+        
+        ax = plt.subplot(num_of_markers+1,1,i+1)
+        #ax = fig.add_subplot(num_of_markers+1,1,i+1)
+        
+        ax.plot(X[start_frame:end_frame],marker_pos_list[j][i][start_frame:end_frame])
+        
+        plt.ylim(-0.05,1.05)
+        plt.ylabel(marker_name_list[i])
+        plt.tick_params(
+        axis='x',          # changes apply to the x-axis
+        which='both',      # both major and minor ticks are affected
+        bottom=False,      # ticks along the bottom edge are off
+        top=False,         # ticks along the top edge are off
+        labelbottom=False) # labels along the bottom edge are off
+    
+    ax = plt.subplot(num_of_markers+1,1,num_of_markers+1)
+    
+    ax.plot(X[start_frame:end_frame],ground_truth_segment[start_frame:end_frame],c='r')
+    
+    plt.ylim(-0.05,1.05)
+    plt.tick_params(axis='x',which='both',labelbottom=True)
+    plt.ylabel("truth")
+    plt.xlabel("seconds")
 
 #%% plot these points above
+"""
 fig, ax = plt.subplots()
 ax.plot(shoulder1_unseen_points)
 ax.set(xlabel='time(frame)',ylabel='seen by 2 cams or not',
@@ -513,7 +408,29 @@ ax.set(xlabel='time(frame)',ylabel='seen by 2 cams or not',
        title='Points not seen by 2 cams at once for hand3')
 fig.savefig('unseen_points_hand3.png')
 plt.show()
+"""
 
+#%% Try histogram plot
+
+fig, ax = plt.subplots()
+ax.hist(hand3_unseen_points)
+ax.set(xlabel='time(frame)',ylabel='seen by 2 cams or not',
+       title='Points not seen by 2 cams at once for hand3')
+fig.savefig('unseen_points_hand3.png')
+plt.show()
+
+#%% Try pie chart
+
+labels = 'Seen Points','Unseen Points'
+sizes = [np.count_nonzero(hand3_unseen_points==0),np.count_nonzero(hand3_unseen_points==1)]
+explode = (0,0.1)
+
+fig1,ax1 = plt.subplots()
+ax1.pie(sizes,explode=explode,labels=labels,autopct='%1.1f%%',
+        shadow=True, startangle=90)
+ax1.axis('equal')
+plt.title('Points not seen by 2 cams at once for hand3')
+plt.show()
 
 """
 
@@ -566,6 +483,7 @@ sum(hand3_unseen_points)/cam1.shape[0])
 9:hand3
 """
 #%% Functions for determing which frames are seen by only one single camera for each Marker
+
 def label_hard_to_see_points(cam1, cam2, cam3):
     cam1_array = cam1.values
     cam2_array = cam2.values
@@ -585,6 +503,7 @@ def label_hard_to_see_points(cam1, cam2, cam3):
         if result3 == True and result1 == False and result2 == False:
             hard_to_see_points_cam3[i] = 1
     return hard_to_see_points_cam1, hard_to_see_points_cam2, hard_to_see_points_cam3
+
 
 #%%Plot unseen frames for each Marker in each camera
 
@@ -731,6 +650,7 @@ def marker_coords(unseen_points_array ,cam, cam_name, marker_name, dataframe_lev
     return marker_x_coords, marker_y_coords
     
 #%%
+
 shoulder1_cam1_unseen_points_x,shoulder1_cam1_unseen_points_y = marker_coords(shoulder1_unseen_points_cam1,cam1,'cam1','shoulder1','bodyparts')
 shoulder1_cam2_unseen_points_x,shoulder1_cam2_unseen_points_y = marker_coords(shoulder1_unseen_points_cam2,cam2,'cam2','shoulder1','bodyparts')
 shoulder1_cam3_unseen_points_x,shoulder1_cam3_unseen_points_y = marker_coords(shoulder1_unseen_points_cam3,cam3,'cam3','shoulder1','bodyparts')
@@ -828,8 +748,9 @@ I've done running all these code (not only shoulder but also other markers) but
 totally messed it up by covering it with an older version. This one left behind
 as an example of how to use this function,but well, anyways.
 """
+"""
 test_shoulder1_cam1 = save_unseen_frames_per_cam("C:\\Users\\dongq\\DeepLabCut\\Han-Qiwei-2020-02-21\\videos\\exp00001DeepCut_resnet50_HanFeb21shuffle1_1030000_labeled.mp4",shoulder1_unseen_points_cam1_loc,46610,'shoulder1_cam1_unseen_points_unlabeled') 
-
+"""
 #%% function to plot all these "unseen" points on pictures to see where
 #   their positions roughly are
 def plot_unseen_points_on_pics(img_dir,x,y,marker_name,cam_name):
@@ -857,6 +778,7 @@ plt.show()
 
 
 #plt.colorbar()?
+"""
 """
 plot_unseen_points_on_pics(img_base_dir+'\\shoulder1_cam1_unseen_points_unlabeled\\frame8950.jpg', shoulder1_cam1_unseen_points_x, shoulder1_cam1_unseen_points_y, 'shoulder1', 'cam1')
 plot_unseen_points_on_pics(img_base_dir+'\\shoulder1_cam2_unseen_points_unlabeled\\frame7357.jpg', shoulder1_cam2_unseen_points_x, shoulder1_cam2_unseen_points_y, 'shoulder1', 'cam2')
@@ -897,7 +819,7 @@ plot_unseen_points_on_pics(img_base_dir+'\\hand2_cam3_unseen_points_unlabeled\\f
 plot_unseen_points_on_pics(img_base_dir+'\\hand3_cam1_unseen_points_unlabeled\\frame40400.jpg', hand3_cam1_unseen_points_x, hand3_cam1_unseen_points_y, 'hand3', 'cam1')
 plot_unseen_points_on_pics(img_base_dir+'\\hand3_cam2_unseen_points_unlabeled\\frame40335.jpg', hand3_cam2_unseen_points_x, hand3_cam2_unseen_points_y, 'hand3', 'cam2')
 plot_unseen_points_on_pics(img_base_dir+'\\hand3_cam3_unseen_points_unlabeled\\frame5529.jpg', hand3_cam3_unseen_points_x, hand3_cam3_unseen_points_y, 'hand3', 'cam3')
-
+"""
 
 
 #%% Next step: get the 2D coordinates of the points above, plot
@@ -947,7 +869,13 @@ cam1_likelihood_values_distribution, cam1_likelihood_values_binned = likelihood_
 cam2_likelihood_values_distribution, cam2_likelihood_values_binned = likelihood_binning(cam2_likelihood_values)
 cam3_likelihood_values_distribution, cam3_likelihood_values_binned = likelihood_binning(cam3_likelihood_values)
 cam4_likelihood_values_distribution, cam4_likelihood_values_binned = likelihood_binning(cam4_likelihood_values)
-#%%
+
+
+cam1_all_likelihood_values_distribution, cam1_all_likelihood_values_binned = likelihood_binning(cam1.xs('likelihood',level='coords',axis=1).values)
+
+#%% Hisogram plot likelihood distribution of all markers in all 4 cameras
+
+
 #fig,ax = plt.subplots()
 #plt.style.use('ggplot')
 plt.figure()
@@ -969,6 +897,81 @@ plt.figure()
 plt.hist(cam4_likelihood_values_binned)
 plt.title('CAM4 likelihood distribution')
 plt.show()
+
+
+#%% Bar plots
+
+def calc_likelihood(cam_dataset, threshold):
+    seen = []
+    seen_percentage = []
+    unseen = []
+    unseen_percentage = []
+    for i in range(cam_dataset.shape[1]):
+        marker = cam_dataset[:,i]
+        seen.append(len(marker[marker > threshold]))
+        seen_percentage.append(len(marker[marker > threshold]) / len(marker))
+        #unseen.append(len(marker[marker < threshold]))
+        unseen.append(len(marker) - seen[i])
+        #unseen_percentage.append(len(marker[marker < threshold]) / len(marker))
+        unseen_percentage.append((len(marker) - len(marker[marker > threshold])) / len(marker))
+    return seen, seen_percentage, unseen, unseen_percentage
+
+
+cam_marker_results = calc_likelihood(cam1_likelihood_values_binned, 0.8)
+
+cam_seen = tuple(cam_marker_results[0])
+cam_seen_percentage = tuple(cam_marker_results[1])
+cam_unseen = tuple(cam_marker_results[2])
+cam_unseen_percentage = tuple(cam_marker_results[3])
+
+
+cam_all_marker_results = calc_likelihood(cam1_all_likelihood_values_binned, 0.8)
+
+cam_all_seen = tuple(cam_all_marker_results[0])
+cam_all_seen_percentage = tuple(cam_all_marker_results[1])
+cam_all_unseen = tuple(cam_all_marker_results[2])
+cam_all_unseen_percentage = tuple(cam_all_marker_results[3])
+
+
+
+cam1_seen_percentage = tuple(calc_likelihood(cam1_likelihood_values_binned, 0.8)[1])
+cam2_seen_percentage = tuple(calc_likelihood(cam2_likelihood_values_binned, 0.8)[1])
+cam3_seen_percentage = tuple(calc_likelihood(cam3_likelihood_values_binned, 0.8)[1])
+cam4_seen_percentage = tuple(calc_likelihood(cam4_likelihood_values_binned, 0.8)[1])
+
+
+
+N_markers = 10
+ind = np.arange(N_markers)
+width = 0.2
+
+plt.figure(figsize=(12,6))
+
+#Plot comparisons between EXP-ONLY and WHOLE-RECORDING
+#p1 = plt.bar(ind, cam_all_seen_percentage, width)
+#p2 = plt.bar(ind, cam_unseen_percentage, width, bottom = cam_seen_percentage)
+#p2 = plt.bar(ind+0.35, cam_seen_percentage, width)
+
+p1 = plt.bar(ind-0.3,cam1_seen_percentage,width)
+p2 = plt.bar(ind-0.1,cam2_seen_percentage,width)
+p3 = plt.bar(ind+0.1,cam3_seen_percentage,width)
+p4 = plt.bar(ind+0.3,cam4_seen_percentage,width)
+
+plt.ylabel('Percentage of Frames')
+plt.title('Percent of high likelihood frames')
+plt.xlabel('Markers')
+plt.xticks(ind,('shoulder1','arm1','arm2','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3'))
+#plt.legend((p1[0],p2[0]),('Whole Video','Experiment Only'),loc='lower right')
+plt.legend((p1[0],p2[0],p3[0],p4[0]),('Cam1','Cam2','Cam3','Cam4'),loc='lower right')
+#plt.legend(p1[0],'High Likelihood',loc='lower right')
+
+plt.show()
+
+
+
+
+
+
 
 #%%
 """

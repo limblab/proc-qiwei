@@ -88,8 +88,8 @@ behave1 = [1500,	2000] # Provide the number of frames here
 time_behave1 = video_timeframe[behave1] # The exact time for those frames will be returned
 
 # figure out the time interval you want to plot and put them here, in seconds
-#t_start, t_end = time_behave1[0], time_behave1[1]
-t_start, t_end = 60,80
+t_start, t_end = 60+video_timeframe[1], 60+20+video_timeframe[1]
+#t_start, t_end = 60,80
 
 idx = np.where( (my_cage_data.binned['timeframe']>t_start) & (my_cage_data.binned['timeframe']<t_end) )[0]
 
@@ -98,7 +98,7 @@ behave_dict = dict()
 behave_dict['spike'] = np.asarray(my_cage_data.binned['spikes']).T[idx, :]
 
 # Here is your hand speed data. In this example I just put a series of 1
-behave_dict['cont'] = sec_speed
+behave_dict['cont'] = sec_speed #sec_speed is from 3D_hand_position_scatterplot_script.py's last section/block of code
 
 fig = plt.figure('rasters', figsize=(11, 10))
 plt.subplots_adjust(left=0.1, right=0.8, top=0.9, bottom=0.1)
