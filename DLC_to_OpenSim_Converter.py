@@ -9,7 +9,7 @@ import os
 #%%Import 3D reconstructed marker file from Min's 3D Reconstruction code
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate4.csv')
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
-df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Rocket-Chris-2020-07-29\reconsturcted-3d-data\output_3d_data.csv')
 
 #%% Set parameters for this dataset
 """
@@ -268,10 +268,10 @@ for i in range(transfer.shape[0]): #for each frame
 FinalOutput = data.append(transfer, ignore_index = True)
 
 #%% Store an .xlsx version of the 3D dataset
-FinalOutput.to_excel(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data_rotate_2.xlsx', index = False, header = False)
-file = pd.read_excel(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data_rotate_2.xlsx', index = False, header = None)
+FinalOutput.to_excel(r'C:\Users\dongq\DeepLabCut\Rocket-Chris-2020-07-29\reconsturcted-3d-data\output_3d_data.xlsx', index = False, header = False)
+file = pd.read_excel(r'C:\Users\dongq\DeepLabCut\Rocket-Chris-2020-07-29\reconsturcted-3d-data\output_3d_data.xlsx', header = None)
 
 #%% Store an .trc version of the 3D dataset (the one we actually need for OpenSim)
 #np.savetxt(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\videos\output_3d_data.txt', transfer.values)
 #https://stackoverflow.com/questions/41211619/how-to-convert-xlsx-to-tab-delimited-files
-file.to_csv(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data_rotate_2.trc',sep = "\t",index = False, header = None)
+file.to_csv(r'C:\Users\dongq\DeepLabCut\Rocket-Chris-2020-07-29\reconsturcted-3d-data\output_3d_data.trc',sep = "\t",index = False, header = None)

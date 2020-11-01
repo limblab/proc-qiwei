@@ -61,7 +61,7 @@ def plot_behave_dict(behave_dict, plot_len, bin_size, video_bin_size = 0.0333):
 """
 -------- Specify path and file name --------
 """
-path = 'C:/Users/dongq/Desktop/Han/20200804/Neural_Data/'
+path = 'C:/Users/dongq/DeepLabCut/Neural_Data/'
 pickle_filename = 'Han_20200804_freeReach_leftS1_4cameras_joe_002.pkl'
 with open ( ''.join((path, pickle_filename)), 'rb' ) as fp:
     my_cage_data = pickle.load(fp)
