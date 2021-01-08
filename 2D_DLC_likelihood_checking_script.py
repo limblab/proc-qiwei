@@ -234,16 +234,16 @@ for i in range(len(allcam_3D_reconstructable_points)):
 
 font = {'family' : 'normal',
 #        'weight' : 'bold',
-        'size'   : 8}
+        'size'   : 16}
 
 font_medium = {'family' : 'normal',
  #       'weight' : 'bold',
-        'size'   : 8}
+        'size'   : 16}
 
 title_font = {'fontname':'Arial', 'size':'16', 'color':'black', 'weight':'normal',
               'verticalalignment':'bottom'} # Bottom vertical alignment for more space
 
-axis_font = {'fontname':'Arial', 'size':'14'}
+axis_font = {'fontname':'Arial', 'size':'16'}
 
 #%% Plot the number/percentage of makers that are likely to be 3D reconed
 
@@ -254,22 +254,25 @@ width=0.4
 
 plt.figure(figsize = (12,6))
 
-p1 = plt.bar(ind-0.2,sum_allcam_3D_recon_percentage,width)       
-p2 = plt.bar(ind+0.2,sum_allcam_3D_recon_exp_percentage,width)
+#p1 = plt.bar(ind-0.2,sum_allcam_3D_recon_percentage,width)       
+#p2 = plt.bar(ind+0.2,sum_allcam_3D_recon_exp_percentage,width)
+p2 = plt.bar(ind,sum_allcam_3D_recon_exp_percentage,width)
 
 plt.xlabel('Markers',**axis_font)
 plt.ylabel('Percentage of Frames',**axis_font)
 plt.title('Percent of high likelihood frames',**title_font)
 plt.xticks(ind,names,**axis_font)
 plt.yticks(np.arange(0,1,0.05),**axis_font)
-plt.legend((p1[0],p2[0]),('Whole Recording','Experiment Only'),loc='lower right')
+#plt.legend((p1[0],p2[0]),('Whole Recording','Experiment Only'),loc='lower right')
 #plt.set_fontsize(20)
 
 plt.show()
 
 
 
+#%% plot change of likelihood through time for all 10 markers
 
+#plt
 
 
 

@@ -30,6 +30,7 @@ import seaborn as sns
 import cage_data
 from matplotlib.ticker import PercentFormatter
 import decimal
+from numpy import savetxt
 #%% Read in the file
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate4.csv')
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate7_copy.csv')
@@ -41,6 +42,19 @@ import decimal
 #df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
 #f_2D = open(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt',"r")
 
+#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\reconstructed-3d-data-RT3D\output_3d_data.csv')
+#f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D.txt", "r")
+
+#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_2_results\reconstructed-3d-data-RT3D\output_3d_data.csv')
+#f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D-2.txt", "r")
+
+df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_3_results\reconstructed-3d-data-RT3D\output_3d_data.csv')
+f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D-2.txt", "r")
+
+
+#df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_1_results\reconstructed-3d-data-RT3D\output_3d_data.csv')
+#f_2D = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D-2.txt", "r")
+
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\reconsturcted-3d-data\output_3d_data.csv')
 #f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\videos\Ground_truth_segments_2020-08-07-RT2D.txt", "r")
 
@@ -51,11 +65,11 @@ import decimal
 #f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt", "r")
 
 
-df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\reconsturcted-3d-data\output_3d_data.csv')
-f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\videos\Ground_truth_segments_2020-09-22-RT3D.txt", "r")
+#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\reconsturcted-3d-data\output_3d_data.csv')
+#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\videos\Ground_truth_segments_2020-09-22-RT3D.txt", "r")
 
-df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\reconsturcted-3d-data\output_3d_data.csv')
-f_2D = open(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt',"r")
+#df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+#f_2D = open(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt',"r")
 #%%Get the ground truth array for experiment trial segmentation
 
 frames_per_second = 25
@@ -121,25 +135,26 @@ def speed_calc_3D(X,Y,Z,fps):
             #temp_speed = np.sqrt((X[i+1]-X[i])**2 + (Y[i+1]-Y[i])**2 + (Z[i+1]-Z[i])**2)
             temp_df[i] = temp_speed
     #return temp_df/0.03333
-    return temp_df*fps#*1000/1e6
+    return temp_df
+#*1000/1e6
 
 #%%Segment/Separate the experiment trials out from this dataset, and convert the digits from mm to m
 f_frame_list_3D = ground_truth_array_extraction(f,df)
 df_exp_only = experiment_trial_segment(df, f_frame_list_3D)
 #df_exp_only = experiment_trial_segment(df, f_frame_list_3D)*1000/1e6
 df = df_exp_only
-
+#%%
+df.to_csv("temp.csv")
+#%%
 f_frame_list_2D = ground_truth_array_extraction(f_2D,df_2D)
 df_exp_only_2D = experiment_trial_segment(df_2D, f_frame_list_2D)
 #df_exp_only_2D = experiment_trial_segment(df, f_frame_list_3D)*1000/1e6
 df_2D = df_exp_only_2D
-
-
 #%% Read in the 2D reaching dataset to compare the hand speed with 3D dataset (TEMP)
 
 nframes_2D = len(df_2D)
 try:
-    list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','arm1_error','arm1_ncams','arm1_score','arm2_error','arm2_ncams','arm2_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
+    list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
     df_2D = df_2D.drop(columns = list_to_delete)
     df_2D = df_2D.drop(df.index[[0,1,2,3,4]])
 except:
@@ -152,7 +167,7 @@ for i in range(df_speed_2D.shape[1]):
     X = i*3 + 0
     Y = i*3 + 1
     Z = i*3 + 2
-    speed_3D_2D = speed_calc_3D(df_np_2D[:,X],df_np_2D[:,Y],df_np_2D[:,Z],25)
+    speed_3D_2D = speed_calc_3D(df_np_2D[:,X],df_np_2D[:,Y],df_np_2D[:,Z],frames_per_second)
     print(speed_3D_2D)
     df_speed_2D[:,i] = speed_3D_2D
 
@@ -161,27 +176,27 @@ df_np_2D[where_are_NaNs] = 0
 where_are_NaNs = np.isnan(df_speed_2D)
 df_speed_2D[where_are_NaNs] = 0
 
-
+#%%
 
 
 
 nframes = len(df)
 try:
-    list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','arm1_error','arm1_ncams','arm1_score','arm2_error','arm2_ncams','arm2_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
+    list_to_delete = ['pointX_x','pointX_y','pointX_z','pointX_error','pointX_ncams','pointX_score','pointY_x','pointY_y','pointY_z','pointY_error','pointY_ncams','pointY_score','pointZ_x','pointZ_y','pointZ_z','pointZ_error','pointZ_ncams','pointZ_score','shoulder1_error','shoulder1_ncams','shoulder1_score','shoulder1_error','elbow1_ncams','elbow1_score','elbow1_error','elbow2_error','elbow2_ncams','elbow2_score','wrist1_error','wrist1_ncams','wrist1_score','wrist2_error','wrist2_ncams','wrist2_score','hand1_error','hand1_ncams','hand1_score','hand2_error','hand2_ncams','hand2_score','hand3_error','hand3_ncams','hand3_score']
     df = df.drop(columns = list_to_delete)
     df = df.drop(df.index[[0,1,2,3,4]])
 except:
     print("error line 154")
 #df_np = df.to_numpy()*0.001 #in meters?
     
-df_np = df.to_numpy()*0.001 #in meters?
+df_np = df.to_numpy()*0.001 #in meters
 
 df_speed = np.zeros((df_np.shape[0],math.floor(df_np.shape[1]/3)))
 for i in range(df_speed.shape[1]):
     X = i*3 + 0
     Y = i*3 + 1
     Z = i*3 + 2
-    speed_3D = speed_calc_3D(df_np[:,X],df_np[:,Y],df_np[:,Z],25)
+    speed_3D = speed_calc_3D(df_np[:,X],df_np[:,Y],df_np[:,Z],frames_per_second)
     print(speed_3D)
     df_speed[:,i] = speed_3D
     
@@ -208,17 +223,19 @@ speed: df_speed[:,6]
 
 #%% Pre-set plotting values
 
-
 sample_session_start = 300 #in seconds
 sample_session_end = 320 #in seconds
 sample_start_frame = sample_session_start * frames_per_second
 sample_end_frame = sample_session_end * frames_per_second
 
-sample_session_start_2D = 400 #in seconds
-sample_session_end_2D = 420 #in seconds
+#%%
+
+sample_session_start_2D = 300 #in seconds
+sample_session_end_2D = 320 #in seconds
 sample_start_frame_2D = sample_session_start_2D * frames_per_second
 sample_end_frame_2D = sample_session_end_2D * frames_per_second
 
+#%%
 
 font = {'family' : 'normal',
 #        'weight' : 'bold',
@@ -228,13 +245,15 @@ font_medium = {'family' : 'normal',
  #       'weight' : 'bold',
         'size'   : 16}
 
+#%%
+
 X = np.linspace(0,df_speed.shape[0]-1,df_speed.shape[0])/frames_per_second
 small_X = list(np.linspace(sample_session_start,sample_session_end,(sample_session_end-sample_session_start)*frames_per_second))
 
+#%%
+
 X_2D = np.linspace(0,df_speed_2D.shape[0]-1,df_speed_2D.shape[0])/frames_per_second
 small_X_2D = list(np.linspace(sample_session_start_2D,sample_session_end_2D,(sample_session_end_2D-sample_session_start_2D)*frames_per_second))
-
-
 
 #%% 20200912 TEMP Get Speed Data for 20 seconds for a plot
 """
@@ -252,6 +271,9 @@ So for that specific section
 sec_speed = df_speed[1500:2000,6]
 sec_pos = df_np[1500:2000,18:21]
 
+
+
+
 fig = plt.figure()
 ax = fig.add_subplot(111,projection='3d')
 cmap = plt.get_cmap('plasma')
@@ -261,18 +283,48 @@ fig.colorbar(cax)
 plt.show()
 
 
+
+#%% SAVE CSV
+
+df_speed_with_fnum = np.empty((df.shape[0],df_speed.shape[1] + 1))
+exp_only_fnum = df['fnum'].to_numpy()
+#df_speed_with_fnum.append(exp_only_fnum)
+#df_speed_with_fnum.append(df_speed)
+df_speed_with_fnum[:,0] = exp_only_fnum
+df_speed_with_fnum[:,1:df_speed.shape[1]+1] = df_speed
+#df_speed_with_fnum = np.vstack([exp_only_fnum, df_speed])
+savetxt('df_speed_Crackle_Qiwei_2020_12_03_RT3D.csv', df_speed_with_fnum,delimiter=',')
+
+
+
+
 #%% 3D Scatter speed & location plot
+
+section_start = 0
+section_end = 1000
+
+
 fig = plt.figure()
 ax = fig.add_subplot(111,projection="3d")
 cmap = plt.get_cmap("jet")
 
 #cax = ax.scatter(df_np_2D[:,18],df_np_2D[:,19],df_np_2D[:,20],c=df_speed_2D[:,6],s=5,cmap=cmap,vmax=0.5)
-cax = ax.scatter(df_np[:,18],df_np[:,19],df_np[:,20],c=df_speed[:,6],s=5,cmap=cmap,vmax=1.2)
+#cax = ax.scatter(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20],c=df_speed[section_start:section_end,6],s=5,cmap=cmap,vmax=1.2)
+cax = ax.scatter(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20],c=df_speed[section_start:section_end,6],s=5,cmap=cmap)
+#cax = ax.plot(xs=df_np[section_start:section_end,18],ys=df_np[section_start:section_end,19],zs=df_np[section_start:section_end,20])
+#cax = ax.scatter(df_np_2D[section_start:section_end,18],df_np_2D[section_start:section_end,19],df_np_2D[section_start:section_end,20],c=df_speed_2D[section_start:section_end,6],s=5,cmap=cmap,vmax=1.2)
 
-plt.xlim(-0.05,0.23)
-plt.ylim(-0.05,0.35)
-ax.scatter(0,0,0,'rp',s=500,c='r')
-ax.plot([0,0.2],[0,0],[0,0],linewidth=3,c='r')
+
+
+#elev=90, azim=0 #top
+#elev=0, azim=0 front
+#elev=0, azim=-90 right
+
+#Plot a reference point where the shoulder is
+#plt.xlim(-0.05,0.23)
+#plt.ylim(-0.05,0.35)
+#ax.scatter(0,0,0,'rp',s=500,c='r')
+#ax.plot([0,0.2],[0,0],[0,0],linewidth=3,c='r')
 
 #If I really want to plot arrows in 3D: https://stackoverflow.com/questions/22867620/putting-arrowheads-on-vectors-in-matplotlibs-3d-plot
 
@@ -294,6 +346,24 @@ plt.yticks(fontsize=16)
 
 plt.rc('font', size=16)
 plt.show()
+
+# =============================================================================
+# name_3D = 'Han-Qiwei-2020-09-22-RT3D'
+# ax.view_init(elev=90, azim=0) #top
+# plt.savefig(name_3D+"_top.png")
+# ax.view_init(elev=0, azim=0) #front
+# plt.savefig(name_3D+"_front.png")
+# ax.view_init(elev=0, azim=-90) #right
+# plt.savefig(name_3D+"_right.png")
+# =============================================================================
+
+name_2D = 'Han-Qiwei-2020-09-22-RT2D'
+#ax.view_init(elev=90, azim=0) #top
+#plt.savefig(name_2D+"_top.png")
+#ax.view_init(elev=0, azim=0) #front
+#plt.savefig(name_2D+"_front.png")
+#ax.view_init(elev=0, azim=-90) #right
+#plt.savefig(name_2D+"_right.png")
 
 """
 As per the pyplot.scatter documentation, the points specified to be plotted 
@@ -332,7 +402,8 @@ x1_limited = x1[x1<3]
 #data_2D = [D(str(item)) for item in np.random.random(N)]
 
 
-plt.hist(x1_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='2D ',histtype='step',linewidth = 3)
+#plt.hist(x1_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='2D ',histtype='step',linewidth = 3)
+plt.hist(x1_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='Qiwei Only',histtype='step',linewidth = 3)
 
 x2 = df_speed[:,6]
 x2_limited = x2[x2<3]
@@ -340,13 +411,19 @@ x2_limited = x2[x2<3]
 #plt.hist(x2,alpha=0.5,label='3D',bins=15,histtype=u'step',linewidth = 3)
 #plt.hist(x2_limited,density=True,alpha=0.5,label='3D ' + str(x2_limited.shape[0]) + ' frames',bins=50,histtype=u'step',linewidth = 3)
 
-plt.hist(x2_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='3D ',histtype='step',linewidth = 3)
+#plt.hist(x2_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='3D ',histtype='step',linewidth = 3)
+plt.hist(x2_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='Qiwei & Joe',histtype='step',linewidth = 3)
+
+
+#plt.xlabel("wirst2 marker speed (in m/s)",**font_medium)
+#plt.ylabel("number of frames",**font_medium)
+#plt.title("Comparing wirst2 speed between 2D and 3D dataset",**font_medium)
+#plt.title("Wrist2 speed distribution",**font_medium)
 
 
 plt.xlabel("wirst2 marker speed (in m/s)",**font_medium)
-plt.ylabel("number of frames",**font_medium)
-plt.title("Comparing wirst2 speed between 2D and 3D dataset",**font_medium)
-#plt.title("Wrist2 speed distribution",**font_medium)
+plt.ylabel("percentage of frames",**font_medium)
+plt.title("Comparing wirst2 speed between model1 (Qiwei) and model2 (Qiwei & Joe)",**font_medium)
 
 
 plt.xticks(fontsize = 16)
@@ -358,6 +435,12 @@ plt.show()
 
 print(np.mean(x1))
 print(np.mean(x2))
+
+#%% Speed difference
+df_speed_diff = np.sqrt((df_speed - df_speed_2D)**2)
+df_speed_diff_mean = df_speed_diff.mean(axis=0)
+
+
 
 #%% plot the speed data
 
@@ -393,4 +476,103 @@ plt.legend()
 
 plt.xticks(fontsize = 16)
 plt.yticks(fontsize = 16)
+plt.show()
+
+
+#%% Plot example figures of the arm position in stick figures
+
+duration = 2 #seconds
+section_start = 10079 #actually 15000 frame in the raw video
+section_end = section_start + duration * frames_per_second
+
+
+fig = plt.figure()
+ax = fig.add_subplot(111,projection="3d")
+cmap = plt.get_cmap("jet")
+
+
+shoulder = np.zeros((df_np.shape[0],3))
+shoulder[:,0] = shoulder_x = df_np[:,0]
+shoulder[:,1] = shoulder_y = df_np[:,1]
+shoulder[:,2] = shoulder_z = df_np[:,2]
+
+elbow = np.zeros((df_np.shape[0],3))
+elbow[:,0] = elbow1_x = df_np[:,9]
+elbow[:,1] = elbow1_y = df_np[:,10]
+elbow[:,2] = elbow1_z = df_np[:,11]
+
+wrist = np.zeros((df_np.shape[0],3))
+wrist[:,0] = wrist1_x = df_np[:,18]
+wrist[:,1] = wrist1_y = df_np[:,19]
+wrist[:,2] = wrist1_z = df_np[:,20]
+
+X = np.zeros((df_np.shape[0],3))
+Y = np.zeros((df_np.shape[0],3))
+Z = np.zeros((df_np.shape[0],3))
+
+X[:,0] = shoulder_x
+X[:,1] = elbow1_x
+X[:,2] = wrist1_x
+
+Y[:,0] = shoulder_y
+Y[:,1] = elbow1_y
+Y[:,2] = wrist1_y
+
+Z[:,0] = shoulder_z
+Z[:,1] = elbow1_z
+Z[:,2] = wrist1_z
+
+#wrist_speed = df_speed_2D[section_start:section_end,6]
+wrist_speed = df_speed[:,6]
+
+#cax = ax.scatter(df_np_2D[:,18],df_np_2D[:,19],df_np_2D[:,20],c=df_speed_2D[:,6],s=5,cmap=cmap,vmax=0.5)
+#cax = ax.scatter(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20],c=df_speed[section_start:section_end,6],s=5,cmap=cmap,vmax=1.2)
+#ax.plot(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20])
+#cax = ax.scatter(df_np_2D[section_start:section_end,18],df_np_2D[section_start:section_end,19],df_np_2D[section_start:section_end,20],c=df_speed_2D[section_start:section_end,6],s=5,cmap=cmap,vmax=1.2)
+
+#for i in range(duration * frames_per_second):
+#ax.plot(shoulder[section_start:section_end,0],shoulder[section_start:section_end,1],shoulder[section_start:section_end,2])
+#ax.plot(elbow[section_start:section_end,0],elbow[section_start:section_end,1],elbow[section_start:section_end,2])
+#ax.plot(wrist[section_start:section_end,0],wrist[section_start:section_end,1],wrist[section_start:section_end,2])
+
+#ax.plot(wrist1_x[section_start:section_end],wrist1_y[section_start:section_end],wrist1_z[section_start:section_end])
+
+for i in range(duration * frames_per_second):
+    ax.plot(X[section_start + i,:],Y[section_start + i,:],Z[section_start + i,:],color='black',alpha=0.5)
+    #ax.scatter(X[section_start + i,:],Y[section_start + i,:],Z[section_start + i,:],c=df_speed[section_start + i,6],s=5,cmap=cmap,vmax=1.2)
+
+ax.plot(wrist1_x[section_start:section_end],wrist1_y[section_start:section_end],wrist1_z[section_start:section_end],color='red')
+cax = ax.scatter(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20],c=df_speed[section_start:section_end,6],s=50,cmap=cmap,vmax=1.2)
+
+#elev=90, azim=0 #top
+#elev=0, azim=0 front
+#elev=0, azim=-90 right
+
+#Plot a reference point where the shoulder is
+plt.xlim(-0.05,0.23)
+plt.ylim(-0.05,0.35)
+#ax.scatter(0,0,0,'rp',s=500,c='r')
+#ax.plot([0,0.2],[0,0],[0,0],linewidth=3,c='r')
+
+#If I really want to plot arrows in 3D: https://stackoverflow.com/questions/22867620/putting-arrowheads-on-vectors-in-matplotlibs-3d-plot
+
+#cb = plt.colorbar(cmap=cmap)
+#cb.set_array([])
+#fig.colorbar(cb, ticks=np.linspace(0,2,N), 
+#             boundaries=np.arange(-0.05,2.1,.1))
+
+cbar = plt.colorbar(cax)
+cbar.ax.get_yaxis().labelpad = 15
+cbar.ax.set_ylabel("m/s",rotation=270,**font_medium)
+
+plt.xlabel("X Axis (in meters)",**font_medium,labelpad=15)
+plt.ylabel("Y Axis (in meters)",**font_medium,labelpad=15)
+
+#plt.title("Wrist2 Movement Speed Heatmap",**font_medium)
+plt.title("Arm movements in 3D",**font_medium)
+
+plt.xticks(fontsize=16)
+plt.yticks(fontsize=16)
+
+plt.rc('font', size=16)
 plt.show()

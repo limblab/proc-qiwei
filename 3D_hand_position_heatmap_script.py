@@ -33,8 +33,9 @@ import seaborn as sns
 
 #%% Step 0: read in CSV
 
-df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\reconsturcted-3d-data\output_3d_data.csv')
-f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\videos\Ground_truth_segments_2020-08-07-RT2D.txt", "r")
+#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\reconstructed-3d-data-RT3D\output_3d_data.csv')
+f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D.txt", "r")
 
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
 #f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt", "r") 
@@ -53,7 +54,7 @@ NOTICE:
 
 #%% Step1-1: Get the ground truth array for experiment trial segmentation
 
-frames_per_second = 25
+frames_per_second = 24
 seconds_per_minute = 60
 
 ground_truth_experiment_segments = f.read()
@@ -109,7 +110,10 @@ df_exp_only = experiment_trial_segment(df, f_frame_list)*1000/1e6
 whole_plot_limit = 1
 
 
-bp_interested = ['shoulder1', 'arm1', 'arm2', 'elbow1', 'elbow2', 'wrist1', 
+#bp_interested = ['shoulder1', 'arm1', 'arm2', 'elbow1', 'elbow2', 'wrist1', 
+#          'wrist2', 'hand1', 'hand2', 'hand3',
+#          'pointX', 'pointY', 'pointZ']
+bp_interested = ['shoulder1', 'elbow1', 'elbow2', 'wrist1', 
           'wrist2', 'hand1', 'hand2', 'hand3',
           'pointX', 'pointY', 'pointZ']
 

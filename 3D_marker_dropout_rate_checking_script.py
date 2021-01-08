@@ -19,16 +19,16 @@ import matplotlib.pyplot as plt
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\reconsturcted-3d-data\output_3d_data.csv')
 
-df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\reconsturcted-3d-data\output_3d_data.csv')
+df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\reconstructed-3d-data-RT3D\output_3d_data.csv')
 #%% Set parameters for this dataset
 """
 IMPORTANT: SPECIFY IF THIS DATASET HAS STATIC "WORLD GROUND TRUTH" POINTS OR NOT
 """
 has_static = True
 
-frameRate = 25
+frameRate = 24
 numFrames = df.shape[0]-1
-numMarkers = 10
+numMarkers = 8
 
 mm_to_m_conversion = 1000
 
@@ -46,7 +46,7 @@ for i in range(df_array.shape[0]):
         if np.isnan(df_array[i,j]):
             num_nans += 1
 actual_num_nans = num_nans/2 #x,y,z are needed, but the following 3 are not needed
-total_points = df_array.size*30/61
+total_points = len(df_array)*3*numMarkers #3 in terms of X,Y,Z
 dropout_percentage = actual_num_nans/total_points
 print("Number of markers in all frames with NaNs", num_nans)
 print("Total points in all frames", total_points)

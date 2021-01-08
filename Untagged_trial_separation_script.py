@@ -21,11 +21,22 @@ from scipy import stats
 import copy
 from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
+
+
+
+"""
+TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+FIX 30 to parameter FPS, don't use 30 again.
+
+
+"""
 #%% Read in the file
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate4.csv')
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\3D-data\output_3d_data_rotate7_copy.csv')
 df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
+
+fps = 25
 
 #%% Pre-process the data, use the body makers that we only need
 nframes = len(df)
@@ -147,26 +158,28 @@ default colour (in this case, jet) will continue to apply.
 """
 
 #%% Read in the 2D reaching dataset to compare the hand speed with 3D dataset (TEMP)
-"""
-df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
-nframes_2D = len(df_2D)
-df_2D = df_2D.drop(columns = list_to_delete)
-df_2D = df_2D.drop(df.index[[0,1,2,3,4]])
-df_np_2D = df_2D.to_numpy()*0.001
-df_speed_2D = np.zeros((df_np_2D.shape[0],math.floor(df_np_2D.shape[1]/3)))
-for i in range(df_speed.shape[1]):
-    X = i*3 + 0
-    Y = i*3 + 1
-    Z = i*3 + 2
-    speed_3D_2D = speed_calc_3D(df_np_2D[:,X],df_np_2D[:,Y],df_np_2D[:,Z],25)
-    print(speed_3D_2D)
-    df_speed_2D[:,i] = speed_3D_2D
-
-where_are_NaNs = np.isnan(df_np_2D)
-df_np_2D[where_are_NaNs] = 0
-where_are_NaNs = np.isnan(df_speed_2D)
-df_speed_2D[where_are_NaNs] = 0
-"""
+# =============================================================================
+# """
+# df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
+# nframes_2D = len(df_2D)
+# df_2D = df_2D.drop(columns = list_to_delete)
+# df_2D = df_2D.drop(df.index[[0,1,2,3,4]])
+# df_np_2D = df_2D.to_numpy()*0.001
+# df_speed_2D = np.zeros((df_np_2D.shape[0],math.floor(df_np_2D.shape[1]/3)))
+# for i in range(df_speed.shape[1]):
+#     X = i*3 + 0
+#     Y = i*3 + 1
+#     Z = i*3 + 2
+#     speed_3D_2D = speed_calc_3D(df_np_2D[:,X],df_np_2D[:,Y],df_np_2D[:,Z],25)
+#     print(speed_3D_2D)
+#     df_speed_2D[:,i] = speed_3D_2D
+# 
+# where_are_NaNs = np.isnan(df_np_2D)
+# df_np_2D[where_are_NaNs] = 0
+# where_are_NaNs = np.isnan(df_speed_2D)
+# df_speed_2D[where_are_NaNs] = 0
+# """
+# =============================================================================
 
 #%% Plot a histogram distribution of the hand speed for both 2D and 3D datasets (TEMP)
 
@@ -198,6 +211,7 @@ print(np.mean(x2))
 #plt.plot(df_speed[:,1])
     
 X = np.linspace(0,df_speed.shape[0]-1,df_speed.shape[0])/30
+
 font = {'family' : 'normal',
         'weight' : 'bold',
         'size'   : 22}
@@ -409,16 +423,21 @@ for i in range(len(f_frame_list)):
     ground_truth_segment[f_frame_list[i]] = 1
 
 #%% (Figure) Plot the ground truth segment
+
+
+X = np.linspace(0,ground_truth_segment.shape[0],ground_truth_segment.shape[0])/25 
+X_temp = np.linspace(0,ground_truth_segment.shape[0] - 4,ground_truth_segment.shape[0] - 4)/25 
+
 plt.figure()
 plt.subplot(211)
-plt.plot(X,ground_truth_segment,label="ground_truth")
-plt.plot(X,clip_speed/4,label="speed data")
+plt.plot(X,ground_truth_segment,label="ground_truth",linewidth=5)
+plt.plot(X_temp,clip_speed/4,label="speed data")
 plt.xlabel("Time (in s)",**font_medium)
 plt.ylabel("speed (in m/s)",**font_medium)
 plt.title("Ground Truth",**font_medium)
 plt.subplot(212)
-plt.plot(X,unfolded_speed,'r',label="predicting result")
-plt.legend()
+plt.plot(X_temp,unfolded_speed,'r',label="predicting result",linewidth=5)
+#plt.legend()
 plt.xlabel("Time (in s)",**font_medium)
 plt.ylabel("speed (in m/s)",**font_medium)
 plt.title("Predicted Result",**font_medium)
@@ -489,7 +508,7 @@ pplot(X,df_speed[:,5],peaks5)
 plt.show()
 """
 
-"#%% (Not useful for now) Marker 5: Plot the peak height distribution to see the extreme peaks of monkey's hand speed
+#%% (Not useful for now) Marker 5: Plot the peak height distribution to see the extreme peaks of monkey's hand speed
 
 """
 height5 = 20
@@ -925,28 +944,30 @@ plt.legend()
 #plt.title("Acceleration of Marker 5 (wrist marker) in 3D, filtered",**font_small)
 
 #%%(PPT) 4 cams gif clipping
-
-"""
-clip_1 = (VideoFileClip(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-07-02\videos\exp00001.avi")
-        .subclip((temp_start_time_minutes, temp_start_time_seconds),(temp_end_time_minutes, temp_end_time_seconds))
-        .resize(0.9))
-clip_1.write_gif(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\videos\single_reach_cam1.gif")
-
-clip_2 = (VideoFileClip(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-07-02\videos\exp00002.avi")
-        .subclip((temp_start_time_minutes, temp_start_time_seconds),(temp_end_time_minutes, temp_end_time_seconds))
-        .resize(0.9))
-clip_2.write_gif(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\videos\single_reach_cam2.gif")
-
-clip_3 = (VideoFileClip(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-07-02\videos\exp00003.avi")
-        .subclip((temp_start_time_minutes, temp_start_time_seconds),(temp_end_time_minutes, temp_end_time_seconds))
-        .resize(0.9))
-clip_3.write_gif(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\videos\single_reach_cam3.gif")
-
-clip_4 = (VideoFileClip(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-07-02\videos\exp00004.avi")
-        .subclip((temp_start_time_minutes, temp_start_time_seconds),(temp_end_time_minutes, temp_end_time_seconds))
-        .resize(0.9))
-clip_4.write_gif(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\videos\single_reach_cam4.gif")
-"""
+# =============================================================================
+# 
+# """
+# clip_1 = (VideoFileClip(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-07-02\videos\exp00001.avi")
+#         .subclip((temp_start_time_minutes, temp_start_time_seconds),(temp_end_time_minutes, temp_end_time_seconds))
+#         .resize(0.9))
+# clip_1.write_gif(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\videos\single_reach_cam1.gif")
+# 
+# clip_2 = (VideoFileClip(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-07-02\videos\exp00002.avi")
+#         .subclip((temp_start_time_minutes, temp_start_time_seconds),(temp_end_time_minutes, temp_end_time_seconds))
+#         .resize(0.9))
+# clip_2.write_gif(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\videos\single_reach_cam2.gif")
+# 
+# clip_3 = (VideoFileClip(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-07-02\videos\exp00003.avi")
+#         .subclip((temp_start_time_minutes, temp_start_time_seconds),(temp_end_time_minutes, temp_end_time_seconds))
+#         .resize(0.9))
+# clip_3.write_gif(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\videos\single_reach_cam3.gif")
+# 
+# clip_4 = (VideoFileClip(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-07-02\videos\exp00004.avi")
+#         .subclip((temp_start_time_minutes, temp_start_time_seconds),(temp_end_time_minutes, temp_end_time_seconds))
+#         .resize(0.9))
+# clip_4.write_gif(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-02-21\videos\single_reach_cam4.gif")
+# """
+# =============================================================================
 
 #%% Separate trials and non-trials
 """
