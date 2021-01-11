@@ -15,6 +15,13 @@ from utils.calibration_utils import *
 from triangulation.triangulate import *
 from calibration.extrinsic import *
 
+cam_path = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/videos/results_Qiwei_New_Iter3'
+cam1_filename = '/Crackle_20201203_00001DLC_resnet50_TestDec3shuffle1_1030000filtered.csv'
+cam2_filename = '/Crackle_20201203_00002DLC_resnet50_TestDec3shuffle1_1030000filtered.csv'
+cam3_filename = '/Crackle_20201203_00003DLC_resnet50_TestDec3shuffle1_1030000filtered.csv'
+cam4_filename = '/Crackle_20201203_00004DLC_resnet50_TestDec3shuffle1_1030000filtered.csv'
+
+
 #config_path = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/config_Crackle_20201203_RT3D_static.toml'
 
 #config_path = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/Iteration_2_results/config_Crackle_20201203_RT3D_static_Iter2.toml'
@@ -119,11 +126,37 @@ for i in range(len(f_frame)):
 # Frame numbers you want to reproject.
 # If you want to use the full data, put frame_counts = []
 #frame_counts = np.array([1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000,16000,17000,18000,19000,20000])
-#frame_counts = []
-frame_counts = np.array(f_frame_list)
-    
+
+frame_counts = [] #All the data (including non-exp phase)
+#frame_counts = np.array(f_frame_list) #Data in exp phase only
+
+#%% Squeeze the likelihood data from the original dataset into the reinterpolated
+#2D dataset, for the interpolation code. This is not the right solution, but 
+#a fast one indeed.
 
 data_3d = pd.read_csv(path_to_3d)
+
+origin_cam1 = pd.read_csv(cam_path + cam1_filename)
+origin_cam2 = pd.read_csv(cam_path + cam2_filename)
+origin_cam3 = pd.read_csv(cam_path + cam3_filename)
+origin_cam4 = pd.read_csv(cam_path + cam4_filename)
+
+origin_cam = [origin_cam1,origin_cam2,origin_cam3,origin_cam4]
+origin_cam_arr = []
+likelihood_cols = [3,6,9,12,15,18,21,24,27,30,33]
+
+for i in range(len(origin_cam)):
+    origin_cam_np = origin_cam[i].to_numpy()
+    origin_cam_np = np.delete(origin_cam_np,(0,1),axis=0)
+    origin_cam_np_float = np.vstack(origin_cam_np[:,:]).astype(np.float)
+    origin_cam_np_float_likelihood = origin_cam_np_float[:,likelihood_cols]
+    
+    origin_cam_arr.append(origin_cam_np_float_likelihood)
+    
+
+
+
+#%%
 
 if len(frame_counts) == 0:
     frame_counts = np.arange(len(data_3d))
@@ -132,28 +165,37 @@ else:
     
 l = len(data_3d)
 
-iterables = [[snapshot], joints, ['x', 'y']]
+iterables = [[snapshot], joints, ['x', 'y','likelihood']]
 header = pd.MultiIndex.from_product(iterables, names=['scorer', 'bodyparts', 'coords'])
 
 data_2d = {ind: [] for ind in vid_indices}
 
-for video, vid_idx in zip(videos, vid_indices):
-    df = pd.DataFrame(np.zeros((l, len(joints)*2)), index=frame_counts, columns=header)
+for video, vid_idx, cam_likelihood in zip(videos, vid_indices,origin_cam_arr):
+    #df = pd.DataFrame(np.zeros((l, len(joints)*2)), index=frame_counts, columns=header)
+    df = pd.DataFrame(np.zeros((l, len(joints)*3)), index=frame_counts, columns=header) #x,y, likelihood
     
     cameraMatrix = np.matrix(intrinsics[vid_idx]['camera_mat'])
     distCoeffs = np.array(intrinsics[vid_idx]['dist_coeff'])
     Rt = np.matrix(extrinsics[vid_idx])
     rvec, tvec = get_rtvec(Rt)
     
-    for joint in joints:
-        x = data_3d[joint+'_x']
-        y = data_3d[joint+'_y']
-        z = data_3d[joint+'_z']
+    #print(cam_likelihood)
+    
+    #for joint in joints:
+    for i in range(len(joints)):  
+        
+        x = data_3d[joints[i]+'_x']
+        y = data_3d[joints[i]+'_y']
+        z = data_3d[joints[i]+'_z']
         objectPoints = np.vstack([x,y,z]).T
         objectPoints = objectPoints.dot((np.linalg.inv(recovery['registration_mat'].T))) + recovery['center']
         coord_2d = np.squeeze(cv2.projectPoints(objectPoints, rvec, tvec, cameraMatrix, distCoeffs)[0], axis=1)
         
-        df[snapshot][joint] = coord_2d
+        coord_2d_likelihood = np.zeros((coord_2d.shape[0],coord_2d.shape[1]+1))
+        coord_2d_likelihood[:,0:2] = coord_2d
+        coord_2d_likelihood[:,2] = cam_likelihood[:,i]
+        
+        df[snapshot][joints[i]] = coord_2d_likelihood
         
     data_2d[vid_idx].append(df)
     

@@ -58,6 +58,7 @@ import cage_data
 from matplotlib.ticker import PercentFormatter
 import decimal
 from numpy import savetxt
+import scipy
 
 
 #%% Read in csvs
@@ -68,7 +69,7 @@ from numpy import savetxt
 #robot_name = '\CameraDistances_20201207_RW_staggeredDistances003_cds_kin.csv'
 #robot_sync = '\CameraDistances_20201207_RW_staggeredDistances003_cds_analog.csv'
 
-DLC_folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_3_results\reconstructed-3d-data-RT3D'
+DLC_folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_3_results\reconstructed-3d-data-RT2D'
 DLC_name = '\output_3d_data.csv'
 
 robot_folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\neural-data'
@@ -83,7 +84,7 @@ DLC = pd.read_csv (DLC_folder + DLC_name)
 
 
 #frames_per_second = 25
-frames_per_second = 25
+frames_per_second = 24
 
 
 #%% Set plotting parameters
@@ -146,9 +147,9 @@ list_to_delete = ['objectA_error','objectA_ncams','objectA_score','fnum','pointX
 DLC_position_only = pre_process_DLC_data(DLC, list_to_delete)
 
 
-X = 0
-Y = 1
-Z = 2
+X = 42
+Y = 43
+Z = 44
 
 DLC_speed = speed_calc_3D(DLC_position_only[:,X],DLC_position_only[:,Y],DLC_position_only[:,Z],frames_per_second)
 
@@ -157,7 +158,7 @@ DLC_speed[where_are_NaNs] = 0
 
 #%% (TEMP) Plot DLC speed data 
 #X = np.linspace(0,average_norm_c1.shape[0]-1,average_norm_c1.shape[0])/frames_per_second
-X_DLC = np.linspace(0, DLC['fnum'].shape[0]-1, DLC['fnum'].shape[0])/frames_per_second
+#X_DLC = np.linspace(0, DLC['fnum'].shape[0]-1, DLC['fnum'].shape[0])/frames_per_second
 
 #plt.figure()
 #plt.plot(X_DLC, DLC_speed)
@@ -179,7 +180,7 @@ rbt_speed = speed_calc_2D(rbt_x, rbt_y, frames_per_second)
 
 #%% (TEMP) Plot robot data
 
-#plt.plot(rbt_time, rbt_speed)
+plt.plot(rbt_time, rbt_speed)
 
 
 
@@ -211,9 +212,9 @@ def frame_picking(df, fps):
     df_diff = [j-i for i, j in zip(df['t'][:-1],df['t'][1:])]
     df_diff = np.array(df_diff)
     
-    print(df_diff)
+    #print(df_diff)
     
-    df_diff_separate = np.where(df_diff >= 0.03,1,0) #Get only 1 uprising edge time point from the 100 points from blackrock for 1 frame
+    df_diff_separate = np.where(df_diff >= 0.02,1,0) #Get only 1 uprising edge time point from the 100 points from blackrock for 1 frame
     df_diff_separate = np.append(df_diff_separate,0)
     df_picked = df_copy[df_diff_separate == 1]
     #plt.plot(df_copy['t'])
@@ -262,7 +263,7 @@ the data.
 #Deep copy robot data for further changes
 rbt_sync_bool = copy.deepcopy(rbt_sync)
 #Set all stimulation amplitudes larger than 300 as 1 (blackrock stimulating Ximea to record), others 0
-rbt_sync_bool['videosync'] = np.where(rbt_sync_bool['videosync'] <= 300, 0, 1)
+rbt_sync_bool['videosync'] = np.where(rbt_sync_bool['videosync'] <= 4900, 0, 1)
 #Take the time points for all the frames with uprising edge out.
 """
 Note: Uprising edge for one time point does not necessarily mean that the
@@ -279,23 +280,83 @@ rbt_analog_timepoints = frame_picking(rbt_sync_bool_1_only,frames_per_second)
 rbt_first_analog_time_sec = rbt_analog_timepoints['t'].iloc[0]
 #Change them to frame numbers, so it' seasier to calculate between the analog data (30000Hz camera sync) and the robot data (1000Hz robot handle position data)
 rbt_first_analog_time_frames = int(rbt_first_analog_time_sec * 1000)
+rbt_first_DLC_frame = rbt_first_analog_time_sec * frames_per_second
+rbt_f1 = int(rbt_first_DLC_frame)
 #Pick the frames in the robot data with the same time points calculated/stored by the downsampled analog data
 rbt_downsampled = downsample_robot_data(rbt, rbt_analog_timepoints)
 
 
+
+
+#%% If robot frame numbers don't fit with DLC frame numbers, change it so they align
+
+#rbt_downsampled
+#DLC
+
+def downsample_dataframe(df, df_fr, df_expect_fr, df_expect_frames):
+    df_c = df.copy(deep=True)
+    #print(df_c)
+    df_np = df_c.to_numpy()
+    #print(df_np)
+    
+    #Uncomment this if you want to calculate pre fps but not per frames
+    df_expect_frames = int(df_np.shape[0] * df_expect_fr / df_fr)
+    
+    where_are_NaNs = np.isnan(df_np)
+    df_np[where_are_NaNs] = 0
+    
+    df_np_resample = scipy.signal.resample(df_np, df_expect_frames,axis=0)
+    
+    df_np_resample[:,-1] = df_np[0:df_np_resample.shape[0],-1]
+    
+    df_resample = pd.DataFrame(df_np_resample, columns = df.columns)
+    
+    #print(df_np_resample)
+    #print(df_c)
+    #return df_np_resample
+    return df_resample
+    
+    
+
+DLC = downsample_dataframe(DLC, 25, 24, rbt_downsampled.shape[0])
+
+
+
+#%% Update DLC speed after possible down_sampling
+
+DLC_position_only = pre_process_DLC_data(DLC, list_to_delete)
+
+DLC_speed = speed_calc_3D(DLC_position_only[:,X],DLC_position_only[:,Y],DLC_position_only[:,Z],frames_per_second)
+
+where_are_NaNs = np.isnan(DLC_speed)
+DLC_speed[where_are_NaNs] = 0
+
+
+#%% Update robot speed after downsampling
+
+
+rbt_time_ds, rbt_x_ds, rbt_y_ds = pre_process_robot_data(rbt_downsampled)
+rbt_speed_ds = speed_calc_2D(rbt_x_ds, rbt_y_ds, frames_per_second)
+
+
 #%% plot both robot speed and DLC speed, for comparison, aligned the start of robot frame to the start of DLC frames
-# =============================================================================
-# X_DLC = np.linspace(0, DLC['fnum'].shape[0]-1, DLC['fnum'].shape[0])/frames_per_second
-# plt.figure()
-# plt.plot(X_DLC, DLC_speed,label='DLC')
-# #plt.plot(X_rbt, rbt_15in_speed,label='Robot')
-# plt.plot(rbt_time[0:rbt_speed.shape[0]-rbt_first_analog_time_frames], rbt_speed[rbt_first_analog_time_frames:rbt_speed.shape[0]],label='Robot')
-# plt.legend()
-# #plt.ylim(0,0.1)
-# plt.title("robot recorded speed and DLC recorded speed")
-# plt.xlabel("time (in seconds)")
-# plt.ylabel("speed (in m/s?)")
-# =============================================================================
+X_DLC = np.linspace(0, DLC['fnum'].shape[0]-1, DLC['fnum'].shape[0])/frames_per_second
+plt.figure()
+plt.ylim(0,5)
+plt.plot(X_DLC, DLC_speed/10,label='DLC')
+#plt.plot(X_rbt, rbt_15in_speed,label='Robot')
+plt.plot(rbt_time_ds[rbt_f1:], rbt_speed_ds[rbt_f1:],label='Robot',alpha=0.5)
+#plt.plot(X_DLC, rbt_speed_ds,label='Robot',alpha=0.7)
+
+#plt.plot(X_DLC[:-1], np.diff(rbt_downsampled['t']),label='Robot')
+
+plt.legend()
+#plt.ylim(0,0.1)
+plt.title("robot recorded speed and DLC recorded speed")
+plt.xlabel("time (in seconds)")
+plt.ylabel("speed (in m/s?)")
+
+
 
 
 #%% Compare the position data between DLC data and robot data
@@ -377,7 +438,11 @@ lstsq_dlc = DLC[['hand3_x','hand3_y','hand3_z']]
 lstsq_dlc_norm = lstsq_dlc - np.mean(lstsq_dlc)
 lstsq_dlc_norm.drop(lstsq_dlc_norm.head(1).index,inplace=True) #dlc has one more row than robot
 
-lstsq = np.linalg.lstsq(lstsq_dlc_norm,lstsq_rbt_norm)
+print(lstsq_dlc_norm.shape)
+print(lstsq_rbt_norm.shape)
+
+#lstsq = np.linalg.lstsq(lstsq_dlc_norm,lstsq_rbt_norm)
+lstsq = np.linalg.lstsq(lstsq_dlc_norm,lstsq_rbt_norm.iloc[:-1,:])
 
 lstsq_dlc_prediction = np.matmul(lstsq_dlc_norm, lstsq[0]) 
 
@@ -416,7 +481,7 @@ def pos_diff_calculation(dlc_data, rbt_data):
 #%% Calculate the difference between dlc_norm data and rbt_norm data
 
 
-pos_diff = pos_diff_calculation(lstsq_dlc_prediction,lstsq_rbt_norm)
+pos_diff = pos_diff_calculation(lstsq_dlc_prediction,lstsq_rbt_norm.iloc[:-1,:])
 mean_pos_diff = np.mean(pos_diff)
 
 # =============================================================================

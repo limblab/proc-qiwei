@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jan  7 13:24:12 2021
-
-@author: dongq
-"""
-
 import xlrd
 import numpy as np
 import seaborn as sns
@@ -48,7 +41,7 @@ def plot_spectral(data, names, fs, nFFT):
             plt.setp(ax.get_xticklabels(),visible=True)
             plt.xlabel('Frequency (Hz)', fontsize = 18)
 
-path = 'C:\\Users\\dongq\\DeepLabCut\\Crackle-Qiwei-2020-12-03\\'
+path = 'E:\\data\\Crackle\\20201203\\'
 xls_name = 'Crackle_20201203_RT3D_3D_expOnly.xlsx'
 
 data=xlrd.open_workbook(path+xls_name)
@@ -69,3 +62,4 @@ data = np.asarray([np.diff(shoulder[0]), np.diff(elbow1[0]), np.diff(wrist1[0]),
 plt.figure('Velosity power spectral density', figsize = (6, 8))
 plt.subplots_adjust(left = 0.2)
 plot_spectral(data, ['Shoulder', 'Elbow 1', 'Wrist 1', 'Hand 1'], 25, 256)
+

@@ -31,29 +31,33 @@ import shelve
 
 main_folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03'
 
-vid_folder = r'\neural-data'
+rbt_folder = r'\neural-data'
+vid_folder = r'reprojected-data\RT2D'
 
-#RT3D
-file_name_cam1 = r'\Crackle_20201203_RT2D_RobotData'
+#Robot data
+file_name_rbt = r'\Crackle_20201203_RT2D_RobotData'
 
 #RT2D
-#file_name_cam1 = r'\Crackle_20201203_00001DLC_resnet50_TestDec3shuffle1_1030000filtered'
-#file_name_cam2 = r'\Crackle_20201203_00002DLC_resnet50_TestDec3shuffle1_1030000filtered'
-#file_name_cam3 = r'\Crackle_20201203_00003DLC_resnet50_TestDec3shuffle1_1030000filtered'
-#file_name_cam4 = r'\Crackle_20201203_00004DLC_resnet50_TestDec3shuffle1_1030000filtered'
+file_name_cam1 = r'\Crackle_20201203_RT2D_reprojeted_2D_data_cam_0_handOnly'
+file_name_cam2 = r'\Crackle_20201203_RT2D_reprojeted_2D_data_cam_1_handOnly'
+file_name_cam3 = r'\Crackle_20201203_RT2D_reprojeted_2D_data_cam_2_handOnly'
+file_name_cam4 = r'\Crackle_20201203_RT2D_reprojeted_2D_data_cam_3_handOnly'
 
 file_type = '.csv'
 
 #RT3D
-groundTruth_file_name = r'\Ground_truth_segments_2020-12-03-RT2D-ForHandleData.txt'
 
 #RT2D
+groundTruth_file_name = r'\Ground_truth_segments_2020-12-03-RT2D-ForHandleData.txt'
 #groundTruth_file_name = r'\Ground_truth_segments_2020-12-03-RT2D.txt'
 
+
+rbt = pd.read_csv(main_folder + rbt_folder + file_name_rbt + file_type)
+
 cam1 = pd.read_csv(main_folder + vid_folder + file_name_cam1 + file_type)
-#cam2 = pd.read_csv(main_folder + vid_folder + file_name_cam2 + file_type)
-#cam3 = pd.read_csv(main_folder + vid_folder + file_name_cam3 + file_type)
-#cam4 = pd.read_csv(main_folder + vid_folder + file_name_cam4 + file_type)
+cam2 = pd.read_csv(main_folder + vid_folder + file_name_cam2 + file_type)
+cam3 = pd.read_csv(main_folder + vid_folder + file_name_cam3 + file_type)
+cam4 = pd.read_csv(main_folder + vid_folder + file_name_cam4 + file_type)
 
 
 f = open(main_folder + groundTruth_file_name, "r") 
