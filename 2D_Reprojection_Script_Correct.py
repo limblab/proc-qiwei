@@ -19,15 +19,27 @@ from calibration.extrinsic import *
 
 #config_path = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/Iteration_2_results/config_Crackle_20201203_RT3D_static_Iter2.toml'
 #config_path = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/Iteration_3_results/config_Crackle_20201203_RT3D_static_Iter3.toml'
-config_path = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/Iteration_3_results/config_Crackle_20201203_RT2D_static_Iter3.toml'
+#config_path = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/Iteration_3_results/config_Crackle_20201203_RT2D_static_Iter3.toml'
+#config_path = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/recon_config.toml'
+#config_path = 'C:/Users/dongq/DeepLabCut/Han_20201204_rwFreeReach/recon_config_RT3D.toml'
+config_path = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/recon_config_RT2D.toml'
 config = load_config(config_path)
 
-Recovery_3D_path = "C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/Iteration_3_results/Crackle_20201203_RT2D.json"
 
-reprojected_file_prefix = 'Crackle_20201203_RT2D' #The file name of Recovery_3D_path
+
+
+#Recovery_3D_path = "C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/Iteration_3_results/Crackle_20201203_RT2D.json"
+#Recovery_3D_path = "C:/Users/dongq/DeepLabCut/Han_20201204_rwFreeReach/reconstructed-3d-data-1/output_3d_data_RT3D.json"
+Recovery_3D_path = "C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/reconstructed-3d-data/output_3d_data_RT2D.json"
+
+reprojected_file_prefix = 'output_3d_data' #The file name of Recovery_3D_path
 
 #%%
 from triangulation.triangulate import reconstruct_3d
+from calibration.intrinsic import calibrate_intrinsic
+from calibration.extrinsic import calibrate_extrinsic
+calibrate_intrinsic(config)
+calibrate_extrinsic(config)
 recovery = reconstruct_3d(config)
 
 #%% Save 3d recovery json file
@@ -80,7 +92,7 @@ snapshot = 'DLC_resnet50_TestDec3shuffle1_1030000filtered'
 #%% Get the array for trial segmentation
 #if experiment_phase_only == 1:
     #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
-f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT2D-ForHandleData.txt", "r") 
+f = open(r"C:\Users\dongq\DeepLabCut\Han_20201204_rwFreeReach\Han_20201204_RT2D_groundTruth.txt", "r") 
 
 frames_per_second = 24
 seconds_per_minute = 60
@@ -115,13 +127,12 @@ for i in range(len(f_frame)):
 #    #print(i)
 #    ground_truth_segment[f_frame_list[i]] = 1
 ##frame_counts = np.array([1,2,3,4,5,10,20,30,40,50,60,70,80,90,100,1000,2000,3000,4000,5000])
-#%%
+#%% 2D reprojection
 # Frame numbers you want to reproject.
 # If you want to use the full data, put frame_counts = []
 #frame_counts = np.array([1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000,16000,17000,18000,19000,20000])
 #frame_counts = []
 frame_counts = np.array(f_frame_list)
-    
 
 data_3d = pd.read_csv(path_to_3d)
 
@@ -132,13 +143,57 @@ else:
     
 l = len(data_3d)
 
+#%%
+#Record the frame number of the frames that have low likelihood
+def get_low_likelihood_and_nans(df):
+    subs = 'score'
+    df_cols = df.columns.tolist()
+    df_likelihood_names = [i for i in df if subs in i] 
+    df_likelihood_cols = df[df_likelihood_names]
+    
+    #Get values < threshold (0.8?) in df_likelihood_cols
+    df_likelihood_low = df_likelihood_cols.copy(deep=True)
+    df_likelihood_low[df_likelihood_low > 0.8] = 0
+    df_likelihood_low[df_likelihood_low > 0.00000000000001] = 1
+    df_likelihood_low[df_likelihood_low.isnull()] = 1
+    #df_likelihood_cols[df_likelihood_cols < 0.8] = 1
+    
+    df_likelihood_low_sum = df_likelihood_low.sum(axis=1)
+    
+    
+    #return df_likelihood_isnull
+    return df_likelihood_low, df_likelihood_low_sum
+    #return df_likelihood_bad_frames
+    
+data_3d_badframes, data_3d_badframes_sum = get_low_likelihood_and_nans(data_3d)
+
+data_3d_badframes_sum[data_3d_badframes_sum >= 1] = 1
+
+data_3d_goodframes_sum = ~data_3d_badframes_sum.astype(bool)
+
+
+
+
+#%%
+
+data_3d_shrink = data_3d[data_3d_goodframes_sum == 1]
+
+#I'm not sure if I should actually do this (deleting a BIG BUNCH (1/3) of the
+#data to delete any data that's probably bad in the slightest way, so... I'm
+#writing this wried code. If one (or I) want(s) to use the original data,
+#just comment this line below.)
+data_3d = data_3d_shrink
+
+l = data_3d.shape[0]
+
+#%%
 iterables = [[snapshot], joints, ['x', 'y']]
 header = pd.MultiIndex.from_product(iterables, names=['scorer', 'bodyparts', 'coords'])
 
 data_2d = {ind: [] for ind in vid_indices}
 
 for video, vid_idx in zip(videos, vid_indices):
-    df = pd.DataFrame(np.zeros((l, len(joints)*2)), index=frame_counts, columns=header)
+    df = pd.DataFrame(np.zeros((l, len(joints)*2)), index=data_3d.index, columns=header)
     
     cameraMatrix = np.matrix(intrinsics[vid_idx]['camera_mat'])
     distCoeffs = np.array(intrinsics[vid_idx]['dist_coeff'])
@@ -193,15 +248,63 @@ for vid_idx, path in zip(vid_indices, paths_to_2d_data):
         #print(coord.shape)
         #err_non_nan = np.linalg.norm(coord_non_nan,axis=1)
         err = np.linalg.norm(coord, axis=1)
-        print(joint+': '+str(np.mean(err)))
-        cam_err.append(np.mean(err))
+        #print(err)
+        print(joint+' mean: '+str(np.mean(err)))
+        print(joint+' std: '+str(np.std(err)))
+        #cam_err.append(np.mean(err))
+        cam_err.append(err)
+        #plt.figure()
+        #plt.boxplot(err)
         #print(joint+': '+str(np.mean(err_non_nan)))
     print("\n")
     avg_err.append(cam_err)
+    
+    
+    
+
+
+
+#%%
+    
+from matplotlib import rcParams
+import seaborn as sns
+rcParams['font.family'] = 'Arial'
+rcParams['pdf.fonttype'] = 42
+rcParams['ps.fonttype'] = 42
+
+cam_num = 3
+upper_err_limit = 10
+
+
+xTicks_names = ['shoulder','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3']
+
+plt.figure(figsize=(8,5))
+#plt.hist(avg_err[1][0],bins=50)
+#plt.boxplot(avg_err[0][0])
+#plt.boxplot(cam_err[0:8])
+#part_to_plot = 
+plt.boxplot(avg_err[cam_num][0:8])
+#plt.boxplot(avg_err[1][0:8],widths = 0.65,positions = 9)
+
+#sns.boxplot(data=avg_err[cam_num][0:8])
+#sns.swarmplot(data=avg_err[cam_num][0:8])
+
+
+
+#for i in range(len(part_to_plot)):
+#    plt.boxplot(part_to_plot[i])
+
+plt.xticks(np.arange(1,9,step=1),xTicks_names,fontsize=18)
+plt.yticks(fontsize=18)
+plt.ylim(-0.1,40)
+plt.ylabel("error (in number of frames)",fontsize=22)
+plt.title("RT3D task reprojection difference for camera " + str(cam_num+1),fontsize=22)
+
 
 
 #path, videos, vid_indices = get_video_path(config)
 #%%
+"""
 #cams = ['Crackle_20201203_00007.avi','Crackle_20201203_00008.avi','Crackle_20201203_00009.avi','Crackle_20201203_00010.avi']
 cams = ['Crackle_20201203_00001.avi','Crackle_20201203_00002.avi','Crackle_20201203_00003.avi','Crackle_20201203_00004.avi']
 
@@ -263,4 +366,4 @@ for vid_idx, vidpath, dlc_path, img_path in zip(vid_indices, vidpaths, paths_to_
     df_rep = data_2d[vid_idx][0]
     
     extract_specific_frames(df_dlc, df_rep, vidpath, frame_counts, img_path)
-    
+"""

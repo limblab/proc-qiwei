@@ -28,7 +28,7 @@ import matplotlib.image as mpimg
 #vid_name = r'\exp00001.avi'
 #vid_num = r'1'
 
-vid_folder = r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos'
+vid_folder = r'D:\DLC_Folders_Currently_In_Use\Han-Qiwei-2020-09-22-RT2D\videos'
 vid_name = r'\exp_han_00018DLC_resnet50_HanSep22shuffle1_1030000_filtered_labeled.mp4'
 vid_num = r'2'
 

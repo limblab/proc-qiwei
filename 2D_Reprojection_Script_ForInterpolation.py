@@ -244,65 +244,67 @@ for vid_idx, path in zip(vid_indices, paths_to_2d_data):
 
 #path, videos, vid_indices = get_video_path(config)
 #%%
-#cams = ['Crackle_20201203_00007.avi','Crackle_20201203_00008.avi','Crackle_20201203_00009.avi','Crackle_20201203_00010.avi']
-cams = ['Crackle_20201203_00001.avi','Crackle_20201203_00002.avi','Crackle_20201203_00003.avi','Crackle_20201203_00004.avi']
-
-#cams = ['Crackle_20201203_00008.avi']
-
-paths_to_save = [os.path.join(path_to_save, cam.split('.')[0]) for cam in cams]
-#vidfolder = 'C:/Users/dongq/DeepLabCut/Han-Qiwei-2020-02-21/videos/'
-vidfolder = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/videos/'
-vidpaths = [os.path.join(vidfolder, cam) for cam in cams]
-
-def extract_specific_frames(df_dlc, df_rep, vidpath, frame_counts, path_to_save): 
-    if not os.path.exists(vidpath):
-        print('Video does not exist.')
-        return
-            
-    cap = cv2.VideoCapture(vidpath) 
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    frame_num = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    duration = frame_num/fps
-    count = len(frame_counts)
-    
-    colorclass = plt.cm.ScalarMappable(cmap='jet')
-    C = colorclass.to_rgba(np.linspace(0, 1, len(joints)))
-    colors = C[:, :3]
-    
-    with tqdm(total=count) as pbar:
-        for f, frame_count in enumerate(frame_counts):
-            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_count)
-            ret, frame = cap.read()
-            plt.figure()
-            plt.imshow(frame)
-            
-            for i, color in enumerate(colors):
-                for joint, color in zip(joints, colors):
-                    plt.scatter(df_dlc[joint]['x'][frame_count],
-                                df_dlc[joint]['y'][frame_count], 
-                                alpha=0.1, s=20, color=color, marker="o")
-                    
-                    plt.scatter(df_rep[snapshot][joint]['x'][frame_count],
-                                df_rep[snapshot][joint]['y'][frame_count], 
-                                alpha=0.1,s=80, color=color, marker="+")
-
-            plt.savefig(os.path.join(path_to_save, 'img' + str(frame_count).zfill(6) + '.png'),
-                        bbox_inches='tight', pad_inches=0)
-            plt.close()
-            pbar.update(1)
-            
-    print('\n{} frames were extracted.'.format(count))
-
-#vid_indices = [vid_indices[1]]
-#paths_to_2d_data = [paths_to_2d_data[1]]
-#frame_counts = np.array([1000,2000,3000,4000,5000,10000,20000,30000])
-
-for vid_idx, vidpath, dlc_path, img_path in zip(vid_indices, vidpaths, paths_to_2d_data, paths_to_save):
-    if not os.path.exists(img_path):
-        os.mkdir(img_path)
-        
-    df_dlc = pd.read_csv(dlc_path, header=[1,2], index_col=0)
-    df_rep = data_2d[vid_idx][0]
-    
-    extract_specific_frames(df_dlc, df_rep, vidpath, frame_counts, img_path)
-    
+# =============================================================================
+# #cams = ['Crackle_20201203_00007.avi','Crackle_20201203_00008.avi','Crackle_20201203_00009.avi','Crackle_20201203_00010.avi']
+# cams = ['Crackle_20201203_00001.avi','Crackle_20201203_00002.avi','Crackle_20201203_00003.avi','Crackle_20201203_00004.avi']
+# 
+# #cams = ['Crackle_20201203_00008.avi']
+# 
+# paths_to_save = [os.path.join(path_to_save, cam.split('.')[0]) for cam in cams]
+# #vidfolder = 'C:/Users/dongq/DeepLabCut/Han-Qiwei-2020-02-21/videos/'
+# vidfolder = 'C:/Users/dongq/DeepLabCut/Crackle-Qiwei-2020-12-03/videos/'
+# vidpaths = [os.path.join(vidfolder, cam) for cam in cams]
+# 
+# def extract_specific_frames(df_dlc, df_rep, vidpath, frame_counts, path_to_save): 
+#     if not os.path.exists(vidpath):
+#         print('Video does not exist.')
+#         return
+#             
+#     cap = cv2.VideoCapture(vidpath) 
+#     fps = cap.get(cv2.CAP_PROP_FPS)
+#     frame_num = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+#     duration = frame_num/fps
+#     count = len(frame_counts)
+#     
+#     colorclass = plt.cm.ScalarMappable(cmap='jet')
+#     C = colorclass.to_rgba(np.linspace(0, 1, len(joints)))
+#     colors = C[:, :3]
+#     
+#     with tqdm(total=count) as pbar:
+#         for f, frame_count in enumerate(frame_counts):
+#             cap.set(cv2.CAP_PROP_POS_FRAMES, frame_count)
+#             ret, frame = cap.read()
+#             plt.figure()
+#             plt.imshow(frame)
+#             
+#             for i, color in enumerate(colors):
+#                 for joint, color in zip(joints, colors):
+#                     plt.scatter(df_dlc[joint]['x'][frame_count],
+#                                 df_dlc[joint]['y'][frame_count], 
+#                                 alpha=0.1, s=20, color=color, marker="o")
+#                     
+#                     plt.scatter(df_rep[snapshot][joint]['x'][frame_count],
+#                                 df_rep[snapshot][joint]['y'][frame_count], 
+#                                 alpha=0.1,s=80, color=color, marker="+")
+# 
+#             plt.savefig(os.path.join(path_to_save, 'img' + str(frame_count).zfill(6) + '.png'),
+#                         bbox_inches='tight', pad_inches=0)
+#             plt.close()
+#             pbar.update(1)
+#             
+#     print('\n{} frames were extracted.'.format(count))
+# 
+# #vid_indices = [vid_indices[1]]
+# #paths_to_2d_data = [paths_to_2d_data[1]]
+# #frame_counts = np.array([1000,2000,3000,4000,5000,10000,20000,30000])
+# 
+# for vid_idx, vidpath, dlc_path, img_path in zip(vid_indices, vidpaths, paths_to_2d_data, paths_to_save):
+#     if not os.path.exists(img_path):
+#         os.mkdir(img_path)
+#         
+#     df_dlc = pd.read_csv(dlc_path, header=[1,2], index_col=0)
+#     df_rep = data_2d[vid_idx][0]
+#     
+#     extract_specific_frames(df_dlc, df_rep, vidpath, frame_counts, img_path)
+#     
+# =============================================================================

@@ -597,25 +597,26 @@ for i in range(len(wholeArray_diff_with_frame_num)):
 #%% Plot the outlier percentage of each maker and of each camera
     
 #outlier_per_cam
-"""
-xLabel_list = ['shoulder','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3']
 
-for i in range(len(outlier_per_cam)):
-    
-    x = range(len(outlier_per_cam[i]))
-    
-    plt.figure(figsize = (10,5.5))
-    plt.bar(x, height = outlier_per_cam[i])
-    
-    plt.xlabel("marker",fontsize=16)
-    plt.ylabel("outlier ratio",fontsize=16)
-    plt.title("outlier ratio for each marker on cam " + str(i+1) + " with " + str(dropout_size) + " dropout(s) per section",fontsize=16)
-    
-    plt.xticks(x, xLabel_list,fontsize = 16)
-    
-    plt_name = "dropout_" +  str(dropout_size) + "_cam_" + str(i+1) + ".png"
-    plt.savefig(plt_name)
-"""
+# =============================================================================
+# xLabel_list = ['shoulder','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3']
+# 
+# for i in range(len(outlier_per_cam)):
+#     
+#     x = range(len(outlier_per_cam[i]))
+#     
+#     plt.figure(figsize = (10,5.5))
+#     plt.bar(x, height = outlier_per_cam[i])
+#     
+#     plt.xlabel("marker",fontsize=16)
+#     plt.ylabel("outlier ratio",fontsize=16)
+#     plt.title("outlier ratio for each marker on cam " + str(i+1) + " with " + str(dropout_size) + " dropout(s) per section",fontsize=16)
+#     
+#     plt.xticks(x, xLabel_list,fontsize = 16)
+#     
+#     plt_name = "dropout_" +  str(dropout_size) + "_cam_" + str(i+1) + ".png"
+#     plt.savefig(plt_name)
+# =============================================================================
     
 
 

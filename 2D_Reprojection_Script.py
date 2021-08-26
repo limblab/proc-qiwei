@@ -310,85 +310,87 @@ for i in range(len(bp_XYZ)):
 
 
 #%% Directly copy Min's plotting code and add results of 2D DLC Tracked Points on this 
-import os
-import cv2
-import numpy as np
-import pandas as pd
-from numpy import array as arr
-from matplotlib import pyplot as plt
-from utils.calibration_utils import *
-from triangulation.triangulate import *
-from calibration.extrinsic import *
-
-path_to_save = config['triangulation']['reconstruction_output_path']
-#cams = ['exp00001.avi','exp00002.avi','exp00003.avi','exp00004.avi']
-cams = ['exp00001.avi','exp00002.avi','exp00003.avi']
-frame_counts = np.arange(1100,1101)
-paths_to_save = [os.path.join(path_to_save, cam.split('.')[0]) for cam in cams]
-vidfolder = 'C:/Users/dongq/DeepLabCut/Han-Qiwei-2020-02-21/videos/'
-vidpaths = [os.path.join(vidfolder, cam) for cam in cams]
-xyzs = []
-for joint in joints:
-    x = data_3d[joint+'_x']
-    y = data_3d[joint+'_y']
-    z = data_3d[joint+'_z']
-    c = np.stack([x,y,z], axis=1)
-    xyzs.append(c)
-xyzs = np.array(xyzs)
-xyzs = np.transpose(xyzs, [1,0,2])
-xyzs = np.reshape(xyzs, (xyzs.shape[0], -1))
-xyzs_3d = xyzs[frame_counts]
-
-DLC_x = [inferred_cam1_x,inferred_cam2_x,inferred_cam3_x]
-DLC_y = [inferred_cam1_y,inferred_cam2_y,inferred_cam3_y]
-
-
-def extract_specific_frames(xyzs_3d, vidpath, frame_counts, path_to_save, DLCx, DLCy):
-    if not os.path.exists(vidpath):
-        print('Video does not exist.')
-        return
-    cap = cv2.VideoCapture(vidpath)
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    frame_num = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    duration = frame_num/fps
-    count = len(frame_counts)
-    colorclass = plt.cm.ScalarMappable(cmap='jet')
-    C = colorclass.to_rgba(np.linspace(0, 1, len(joints)))
-    colors = C[:, :3]
-    with tqdm(total=count) as pbar:
-        for f, frame_count in enumerate(frame_counts):
-            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_count)
-            ret, frame = cap.read()
-            plt.figure()
-            plt.imshow(frame)
-            for i, color in enumerate(colors):
-                xyz_p = np.expand_dims(xyzs_3d[f, 3*i:3*i+3], axis=0)
-                xyz_p = xyz_p.dot((np.linalg.inv(recovery['registration_mat'].T))) + recovery['center']
-                coord_2d = np.squeeze(cv2.projectPoints(xyz_p, rvec, tvec, cameraMatrix, distCoeffs)[0], axis=1)
-                x = coord_2d[0][0]
-                #print(x)
-                y = coord_2d[0][1]
-                #print(y)
-                #print(i)
-                #print(" ")
-                plt.scatter(x, y, s=2, color=color, marker='o')
-                plt.scatter(DLCx[i], DLCy[i], s=2, color=color, marker='_',alpha=0.5)
-            plt.savefig(os.path.join(path_to_save, 'img' + str(frame_count).zfill(6) + '.png'),
-                        bbox_inches='tight', pad_inches=0, dpi=600)
-            plt.close()
-            pbar.update(1)
-    print('\n{} frames were extracted.'.format(count))
-    
-#for vid_idx, vidpath, path_to_save in zip(vid_indices, vidpaths, paths_to_save):
-#    #print(i)
-#    if not os.path.exists(path_to_save):
-#        os.mkdir(path_to_save)
-#    extract_specific_frames(xyzs_3d, vidpath, frame_counts, path_to_save,DLC_x[i],DLC_y[i])
-    
-for i in range(3):
-    if not os.path.exists(paths_to_save[i]):
-        os.mkdir(paths_to_save[i])
-    extract_specific_frames(xyzs_3d, vidpaths[i], frame_counts, paths_to_save[i],DLC_x[i],DLC_y[i])    
+# =============================================================================
+# import os
+# import cv2
+# import numpy as np
+# import pandas as pd
+# from numpy import array as arr
+# from matplotlib import pyplot as plt
+# from utils.calibration_utils import *
+# from triangulation.triangulate import *
+# from calibration.extrinsic import *
+# 
+# path_to_save = config['triangulation']['reconstruction_output_path']
+# #cams = ['exp00001.avi','exp00002.avi','exp00003.avi','exp00004.avi']
+# cams = ['exp00001.avi','exp00002.avi','exp00003.avi']
+# frame_counts = np.arange(1100,1101)
+# paths_to_save = [os.path.join(path_to_save, cam.split('.')[0]) for cam in cams]
+# vidfolder = 'C:/Users/dongq/DeepLabCut/Han-Qiwei-2020-02-21/videos/'
+# vidpaths = [os.path.join(vidfolder, cam) for cam in cams]
+# xyzs = []
+# for joint in joints:
+#     x = data_3d[joint+'_x']
+#     y = data_3d[joint+'_y']
+#     z = data_3d[joint+'_z']
+#     c = np.stack([x,y,z], axis=1)
+#     xyzs.append(c)
+# xyzs = np.array(xyzs)
+# xyzs = np.transpose(xyzs, [1,0,2])
+# xyzs = np.reshape(xyzs, (xyzs.shape[0], -1))
+# xyzs_3d = xyzs[frame_counts]
+# 
+# DLC_x = [inferred_cam1_x,inferred_cam2_x,inferred_cam3_x]
+# DLC_y = [inferred_cam1_y,inferred_cam2_y,inferred_cam3_y]
+# 
+# 
+# def extract_specific_frames(xyzs_3d, vidpath, frame_counts, path_to_save, DLCx, DLCy):
+#     if not os.path.exists(vidpath):
+#         print('Video does not exist.')
+#         return
+#     cap = cv2.VideoCapture(vidpath)
+#     fps = cap.get(cv2.CAP_PROP_FPS)
+#     frame_num = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+#     duration = frame_num/fps
+#     count = len(frame_counts)
+#     colorclass = plt.cm.ScalarMappable(cmap='jet')
+#     C = colorclass.to_rgba(np.linspace(0, 1, len(joints)))
+#     colors = C[:, :3]
+#     with tqdm(total=count) as pbar:
+#         for f, frame_count in enumerate(frame_counts):
+#             cap.set(cv2.CAP_PROP_POS_FRAMES, frame_count)
+#             ret, frame = cap.read()
+#             plt.figure()
+#             plt.imshow(frame)
+#             for i, color in enumerate(colors):
+#                 xyz_p = np.expand_dims(xyzs_3d[f, 3*i:3*i+3], axis=0)
+#                 xyz_p = xyz_p.dot((np.linalg.inv(recovery['registration_mat'].T))) + recovery['center']
+#                 coord_2d = np.squeeze(cv2.projectPoints(xyz_p, rvec, tvec, cameraMatrix, distCoeffs)[0], axis=1)
+#                 x = coord_2d[0][0]
+#                 #print(x)
+#                 y = coord_2d[0][1]
+#                 #print(y)
+#                 #print(i)
+#                 #print(" ")
+#                 plt.scatter(x, y, s=2, color=color, marker='o')
+#                 plt.scatter(DLCx[i], DLCy[i], s=2, color=color, marker='_',alpha=0.5)
+#             plt.savefig(os.path.join(path_to_save, 'img' + str(frame_count).zfill(6) + '.png'),
+#                         bbox_inches='tight', pad_inches=0, dpi=600)
+#             plt.close()
+#             pbar.update(1)
+#     print('\n{} frames were extracted.'.format(count))
+#     
+# #for vid_idx, vidpath, path_to_save in zip(vid_indices, vidpaths, paths_to_save):
+# #    #print(i)
+# #    if not os.path.exists(path_to_save):
+# #        os.mkdir(path_to_save)
+# #    extract_specific_frames(xyzs_3d, vidpath, frame_counts, path_to_save,DLC_x[i],DLC_y[i])
+#     
+# for i in range(3):
+#     if not os.path.exists(paths_to_save[i]):
+#         os.mkdir(paths_to_save[i])
+#     extract_specific_frames(xyzs_3d, vidpaths[i], frame_counts, paths_to_save[i],DLC_x[i],DLC_y[i])    
+# =============================================================================
     
 
 

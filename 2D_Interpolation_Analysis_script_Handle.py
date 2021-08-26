@@ -29,23 +29,18 @@ import shelve
 
 #%% read in files
 
-main_folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03'
+main_folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03-handle'
 
-rbt_folder = r'\neural-data'
-vid_folder = r'reprojected-data\RT2D'
+vid_folder = r'\handle-data'
+rbt_folder = r'\handle-data'
 
-#Robot data
-file_name_rbt = r'\Crackle_20201203_RT2D_RobotData'
-
-#RT2D
-file_name_cam1 = r'\Crackle_20201203_RT2D_reprojeted_2D_data_cam_0_handOnly'
-file_name_cam2 = r'\Crackle_20201203_RT2D_reprojeted_2D_data_cam_1_handOnly'
-file_name_cam3 = r'\Crackle_20201203_RT2D_reprojeted_2D_data_cam_2_handOnly'
-file_name_cam4 = r'\Crackle_20201203_RT2D_reprojeted_2D_data_cam_3_handOnly'
+#data
+#file_name_vid = r'\handle_dlc_1'
+file_name_vid = r'\handle_dlc_filt_1'
+#file_name_vid = r'\handle_rbt_1'
+file_name_rbt = r'\handle_rbt_1'
 
 file_type = '.csv'
-
-#RT3D
 
 #RT2D
 groundTruth_file_name = r'\Ground_truth_segments_2020-12-03-RT2D-ForHandleData.txt'
@@ -54,10 +49,7 @@ groundTruth_file_name = r'\Ground_truth_segments_2020-12-03-RT2D-ForHandleData.t
 
 rbt = pd.read_csv(main_folder + rbt_folder + file_name_rbt + file_type)
 
-cam1 = pd.read_csv(main_folder + vid_folder + file_name_cam1 + file_type)
-cam2 = pd.read_csv(main_folder + vid_folder + file_name_cam2 + file_type)
-cam3 = pd.read_csv(main_folder + vid_folder + file_name_cam3 + file_type)
-cam4 = pd.read_csv(main_folder + vid_folder + file_name_cam4 + file_type)
+cam1 = pd.read_csv(main_folder + vid_folder + file_name_vid + file_type)
 
 
 f = open(main_folder + groundTruth_file_name, "r") 
@@ -69,7 +61,7 @@ Remember to check this for EACH VIDEO cuz they'll vary
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 """
 #RT3D
-frames_per_second = 24
+frames_per_second = 25
 
 #RT2D
 #frames_per_second = 24
@@ -145,14 +137,32 @@ for i in range(len(f_frame_list)):
 #cam4_exp_only = experiment_trial_segment(cam4,f_frame_list)
     
 cams = [cam1]
-cams_arr = []
+#cams_arr = []
 cams_arr_exp = []
 
+rbts = [rbt]
+#rbts_arr = []
+rbt_arr_exp = []
+
 for i in range(len(cams)):
-    cams[i] = cams[i].drop([0,1],axis=0)
-    cams_arr.append(cams[i].to_numpy().astype(np.float))
+    #cams[i] = cams[i].drop([0,1],axis=0)
+    #.append(cams[i].to_numpy().astype(np.float))
+    #print(cams[i].to_numpy().astype(np.float)[f_frame_list])
     cams_arr_exp.append(cams[i].to_numpy().astype(np.float)[f_frame_list])
-         
+
+for i in range(len(rbts)):
+    #print(i)
+    #print(rbts[i].to_numpy().astype(np.float)[f_frame_list])
+    rbt_arr_exp.append(rbts[i].to_numpy().astype(np.float)[f_frame_list])
+
+
+#def get_exp_only_df(df_list):
+#    exp_phase_list = []
+#    for i in range(len(df_list)):
+#f_frame        exp_phase_list.append(df_list[i].to_numpy().astype(np.float))
+
+
+
 #cam1_arr = cam1.to_numpy()
 #cam2_arr = cam2.to_numpy()
 #cam3_arr = cam3.to_numpy()
@@ -181,12 +191,12 @@ cams_list: which cams to use
 #segment_nums = 100 #number of segments chosen per camera per marker
 segment_size = 30    #frames
 #dropout_size = 2 #frames in each segment
-dropout_size = 5 #frames in each segment
+dropout_size = 4 #frames in each segment
 likelihood_lim = 0.9 #0~1, 1 being the most likely, 0 being the least likely
 cams_list = [1,2,3,4] #which cams to use
 
-markers_x = [4]
-markers_y = [5]
+markers_x = [1]
+markers_y = [2]
 markers_l = [3] #likelihood
 markers_f = [0] #frames
 
@@ -204,99 +214,116 @@ for i in each camera: #4
                     append this segment (frame nums, x, y, likelihood) that is "from k to k + "segment_size"" to the result array
                     
 """
-camera_lists = []
-
-for i in range(len(cams_arr_exp)): # 4 cameras
-    #print(i)
+def extract_sections(cams_arr_exp,markers_x,markers_y,markers_l,markers_f,segment_size):
+    #print(cams_arr_exp)
+    camera_lists = []
     
-    camera_marker = []
-    
-    for j in range(len(markers_x)): #8 markers
-        #use the markers_x, markers_y, markers_l, markers_f for j
+    for i in range(len(cams_arr_exp)): # 4 cameras
+        #print(i)
         
-        marker_segment = []
+        camera_marker = []
         
-        k = 0
-        #for k in range(cams_arr_exp[i].shape[0]): #33647 frames
-        while k < cams_arr_exp[i].shape[0]:
+        for j in range(len(markers_x)): #8 markers
+            #use the markers_x, markers_y, markers_l, markers_f for j
             
-            tmp_likelihood = cams_arr_exp[i][k , markers_l[j]]
-            #print(tmp_likelihood)
-            #If the likelihood is in good shape, we check the subsequent 30 frames,
-            #see if they're also in good shape or not
+            marker_segment = []
             
-            if tmp_likelihood >= likelihood_lim:
+            k = 0
+            #for k in range(cams_arr_exp[i].shape[0]): #33647 frames
+            while k < cams_arr_exp[i].shape[0]:
                 
-                tmp_likelihood_list = cams_arr_exp[i][k:k+segment_size , markers_l[j]]
+                tmp_likelihood = cams_arr_exp[i][k , markers_l[j]]
+                #print(tmp_likelihood)
+                #print(tmp_likelihood)
+                #If the likelihood is in good shape, we check the subsequent 30 frames,
+                #see if they're also in good shape or not
                 
-                if sum(tmp_likelihood_list > likelihood_lim) == segment_size:
+                if tmp_likelihood >= likelihood_lim:
                     
-                    tmp_segment = np.zeros((segment_size, 4)) #4 for frame numbers, x value, y value, likelihood value
-                    tmp_segment[:,0] = cams_arr_exp[i][k:k+segment_size , markers_f[0]]
-                    tmp_segment[:,1] = cams_arr_exp[i][k:k+segment_size , markers_x[j]]
-                    tmp_segment[:,2] = cams_arr_exp[i][k:k+segment_size , markers_y[j]]
-                    tmp_segment[:,3] = cams_arr_exp[i][k:k+segment_size , markers_l[j]]
+                    tmp_likelihood_list = cams_arr_exp[i][k:k+segment_size , markers_l[j]]
                     
-                    marker_segment.append(tmp_segment)
-                    
-                    #print(tmp_segment)
-                    
-                    k = k + segment_size
-                    #print(k)
-                #print(sum(tmp_likelihood_list > likelihood_lim))
-            k = k + 1
-        camera_marker.append(marker_segment)
-    
-    #print(i)
-    camera_lists.append(camera_marker)
+                    if sum(tmp_likelihood_list > likelihood_lim) == segment_size:
+                        
+                        tmp_segment = np.zeros((segment_size, 4)) #4 for frame numbers, x value, y value, likelihood value
+                        
+                        #print(j)
+                        #print(markers_x[j])
+                        #print(markers_y[j])
+                        #print(markers_l[j])
+                        tmp_segment[:,0] = cams_arr_exp[i][k:k+segment_size , markers_f[0]]
+                        tmp_segment[:,1] = cams_arr_exp[i][k:k+segment_size , markers_x[j]]
+                        tmp_segment[:,2] = cams_arr_exp[i][k:k+segment_size , markers_y[j]]
+                        tmp_segment[:,3] = cams_arr_exp[i][k:k+segment_size , markers_l[j]]
+                        
+                        marker_segment.append(tmp_segment)
+                        
+                        #print(tmp_segment)
+                        
+                        k = k + segment_size
+                        #print(k)
+                    #print(sum(tmp_likelihood_list > likelihood_lim))
+                k = k + 1
+            camera_marker.append(marker_segment)
+        
+        #print(i)
+        camera_lists.append(camera_marker)
+        return camera_lists
+        
+camera_lists = extract_sections(cams_arr_exp,markers_x,markers_y,markers_l,markers_f,segment_size)
+robot_lists = extract_sections(rbt_arr_exp,markers_x,markers_y,markers_l,markers_f,segment_size)
     
 #%% If segment_nums parameter exists, randomly choose the segment_nums numbers of
     #segments, and cover the camera_lists list with that.
 
 if 'segment_nums' in globals():
     #print("1")
-    camera_lists_limit = []
-    
-    for i in range(len(camera_lists)):
+    def choose_limited_segments(camera_lists):
+        camera_lists_limit = []
         
-        marker_lists_limit = []
-        
-        for j in range(len(camera_lists[i])):
+        for i in range(len(camera_lists)):
             
-            if camera_lists[i][j] == []:
-                marker_lists_limit.append([])
+            marker_lists_limit = []
+            
+            for j in range(len(camera_lists[i])):
                 
-            else:
-                randomList = random.sample(range(0, len(camera_lists[i][j])),segment_nums)
-                #print(randomList)
-                #print("\n")
-                
-                #print(len(camera_lists[i][j]))
-                #print("\n")
-                markers_limited = []
-                
-                for k in range(segment_nums):
-                    #print(randomList[i])
-                    markers_limited.append(camera_lists[i][j][randomList[k]])
-                #markers_limit = camera_lists[i][j]randomList
-                #print(markers_limit)
-                marker_lists_limit.append(markers_limited)
-        camera_lists_limit.append(marker_lists_limit)
+                if camera_lists[i][j] == []:
+                    marker_lists_limit.append([])
+                    
+                else:
+                    randomList = random.sample(range(0, len(camera_lists[i][j])),segment_nums)
+                    #print(randomList)
+                    #print("\n")
+                    
+                    #print(len(camera_lists[i][j]))
+                    #print("\n")
+                    markers_limited = []
+                    
+                    for k in range(segment_nums):
+                        #print(randomList[i])
+                        markers_limited.append(camera_lists[i][j][randomList[k]])
+                    #markers_limit = camera_lists[i][j]randomList
+                    #print(markers_limit)
+                    marker_lists_limit.append(markers_limited)
+            camera_lists_limit.append(marker_lists_limit)
+        
+        #Replace camera_lists with camera_lists_limit
+        camera_lists = camera_lists_limit
+        return camrea_lists
     
-    #Replace camera_lists with camera_lists_limit
-    camera_lists = camera_lists_limit
+    camera_lists = choose_limited_segments(camera_lists)
+    robot_lists = choose_limited_segments(robot_lists) 
 
             
-#%% Drop the middle frames according to dropout_size
-camera_lists_dropped = copy.deepcopy(camera_lists)
-
-#drop column 1 and 2 (X axis value and Y axis value)'s center n values
-#segment_size 30
-#dropout_size 2
+#%% Calculate the start and end frame of each section
+    
+    
+    #drop column 1 and 2 (X axis value and Y axis value)'s center n values
+    #segment_size 30
+    #dropout_size 2
 
 dropout_start_pos = int((segment_size/2) - int(dropout_size/2))
 dropout_end_pos = dropout_start_pos + dropout_size
-            
+
 
 #%% Use interpolation function on the extracted data
 
@@ -331,12 +358,12 @@ for i in range(len(camera_lists_dropped)): #4 for each camera
             tmp_seg_y_s = pd.Series(tmp_seg_y)
             
             #order 3 polynomial
-            new_x_s = tmp_seg_x_s.interpolate(method = 'polynomial', order = 3)
-            new_y_s = tmp_seg_y_s.interpolate(method = 'polynomial', order = 3)
+            #new_x_s = tmp_seg_x_s.interpolate(method = 'polynomial', order = 3)
+            #new_y_s = tmp_seg_y_s.interpolate(method = 'polynomial', order = 3)
             
             #linear
-            #new_x_s = tmp_seg_x_s.interpolate(method = 'linear')
-            #new_y_s = tmp_seg_y_s.interpolate(method = 'linear')
+            new_x_s = tmp_seg_x_s.interpolate(method = 'linear')
+            new_y_s = tmp_seg_y_s.interpolate(method = 'linear')
             
             #order 2 polynomial
             #new_x_s = tmp_seg_x_s.interpolate(method = 'polynomial', order = 2)
@@ -383,7 +410,7 @@ for i in range(len(camera_lists_dropped)): #4 for each camera
 #%% Calculate diff between acutal recorded results and interpolated results
 """
 #diff between
-#camera_lists
+#robot_lists
 #camera_lists_interpolated
 
 in between
@@ -414,7 +441,9 @@ for i in range(len(camera_lists)): #4, per camera
         
         for k in range(len(camera_lists[i][j])): #a few hundreds, per each segment of interpolated data
             
-            tmp_truth = copy.deepcopy(camera_lists[i][j][k][dropout_start_pos:dropout_end_pos,:])
+            #robot data (ground truth)
+            tmp_truth = copy.deepcopy(robot_lists[i][j][k][dropout_start_pos:dropout_end_pos,:])
+            #interpolated data (testing data)
             tmp_interp = copy.deepcopy(camera_lists_interpolated[i][j][k][dropout_start_pos:dropout_end_pos,:])
             
             tmp_segment = copy.deepcopy(tmp_truth) #I just want this 2*4 list structure without reconstructing it from 0
@@ -437,10 +466,13 @@ for i in range(len(camera_lists)): #4, per camera
     
     camera_diff.append(camera_marker_diff)
 
+"""
+So everything absed on camera_diff is the difference between ground truth and
+the interpolated data (which we are testing)
+"""
 
 
-
-#%% Calculate the stats of these interpolation results
+#%% Calculate the stats of these interpolation results between robot and camera
 
 #total average (actually present)
 
@@ -448,10 +480,10 @@ for i in range(len(camera_lists)): #4, per camera
 
 #average per camera (calculate, but don't need to present)
 
-avg_cam = []
-stderr_cam = []
-wholeArray_diff = []
-wholeArray_diff_with_frame_num = []
+avg_cam = [] #based on ground truth
+stderr_cam = [] #based on ground truth
+wholeArray_diff = [] #based on ground truth
+wholeArray_diff_with_frame_num = [] #based on ground truth
 
 for i in range(len(camera_diff)): #4, per camera
     
@@ -506,7 +538,7 @@ for i in range(len(camera_diff)): #4, per camera
 
 # os.path.dirname(main_folder) 'C:\\Users\\dongq\\DeepLabCut'
 # os.path.basename(main_folder) 'Crackle-Qiwei-2020-12-03'
-    
+"""
 save_file_avg = avg_cam
 save_file_name_avg = 'avg'
 
@@ -516,7 +548,7 @@ save_file_name_stderr = 'stderr'
 #my_var_name = [ k for k,v in locals().iteritems() if v == my_var][0]#%%
 np.savetxt(os.path.basename(main_folder) + '_dropout_size_' + str(dropout_size) + '_' + save_file_name_avg + '.csv', save_file_avg, delimiter = ',', fmt='%1.3f')
 np.savetxt(os.path.basename(main_folder) + '_dropout_size_' + str(dropout_size) + '_' + save_file_name_stderr + '.csv', save_file_stderr, delimiter = ',', fmt='%1.3f')
-
+"""
 
 #%% Combine Total average and standard deviation for this entire dropout length
 
@@ -526,6 +558,7 @@ np.savetxt(os.path.basename(main_folder) + '_dropout_size_' + str(dropout_size) 
 #it is utterly impossible to get all these single arrays to one 2D array so anyways
 #I SUCK AT CODING FUCK
 
+#first calculate how long this array would be
 total_len = 0
 for i in range(len(wholeArray_diff)):
     marker_len = 0
@@ -533,9 +566,11 @@ for i in range(len(wholeArray_diff)):
         marker_len = marker_len + wholeArray_diff[i][j].shape[0]
     total_len  = total_len + marker_len
     
-wholeArray = np.zeros((total_len,))
+#construct an empty array to be filled with all these sections from different markers
+wholeArray = np.zeros((total_len,)) #based on ground truth, it's actually the value of differences between ground truth and interpolated results from the whole array
 total_len_count = 0
 
+#use these for loops to fill the wholeArray array.
 for i in range(len(wholeArray_diff)):
     for j in range(len(wholeArray_diff[i])):
         start = total_len_count
@@ -547,15 +582,25 @@ for i in range(len(wholeArray_diff)):
 
 save_file_wholeArr = wholeArray
 save_file_name_wholeArr = 'wholeArr'
+interp_type_poly = '_polynomial3'
+interp_type_linear = '_linear'
+handle_name = '_handlehandle'
+DLC_name = '_DLChandle'
 
 #my_var_name = [ k for k,v in locals().iteritems() if v == my_var][0]#%%
-np.savetxt(os.path.basename(main_folder) + '_dropout_size_' + str(dropout_size) + '_' + save_file_name_wholeArr + '.csv', save_file_wholeArr, delimiter = ',', fmt='%1.3f')
+#np.savetxt(os.path.basename(main_folder) + '_dropout_size_' + str(dropout_size) + '_' + save_file_name_wholeArr + '.csv', save_file_wholeArr, delimiter = ',', fmt='%1.3f')
+
+#np.savetxt(os.path.basename(main_folder) + interp_type_poly + DLC_name +  '_dropout_size_' + str(dropout_size) + '_' + save_file_name_wholeArr + '.csv', save_file_wholeArr, delimiter = ',', fmt='%1.3f')
+np.savetxt(os.path.basename(main_folder) + interp_type_linear + DLC_name +  '_dropout_size_' + str(dropout_size) + '_' + save_file_name_wholeArr + '.csv', save_file_wholeArr, delimiter = ',', fmt='%1.3f')
+
+#np.savetxt(os.path.basename(main_folder) + interp_type_poly + handle_name +  '_dropout_size_' + str(dropout_size) + '_' + save_file_name_wholeArr + '.csv', save_file_wholeArr, delimiter = ',', fmt='%1.3f')
+#np.savetxt(os.path.basename(main_folder) + interp_type_linear + handle_name +  '_dropout_size_' + str(dropout_size) + '_' + save_file_name_wholeArr + '.csv', save_file_wholeArr, delimiter = ',', fmt='%1.3f')
 
 
 #%% Calculate the overall mean and std dev
         
 
-outlier_lim = 0.9
+
 
 overall_mean = np.mean(wholeArray)
 print("overall mean")
@@ -567,6 +612,11 @@ print("overall standard deviation")
 print(overall_stddev)
 print("\n")
 
+
+#set the value of outliers relative to 2 stds further from the overall mean
+outlier_lim = overall_mean + 2*overall_stddev
+
+
 overall_outliers = sum(wholeArray > outlier_lim)/wholeArray.shape[0]
 print("overall outliers")
 print(overall_outliers)
@@ -575,7 +625,7 @@ print(overall_outliers)
 
 #plt.hist(wholeArray)
 
-#plt.boxplot(wholeArray)
+plt.boxplot(wholeArray[wholeArray<10])
 
 #%% Calculate the outlier percentage of each marker and each camera
 
@@ -595,7 +645,7 @@ for i in range(len(wholeArray_diff_with_frame_num)):
         
         marker_diff_arr = wholeArray_diff_with_frame_num[i][j][:,1]
         
-        marker_diff_per = sum(marker_diff_arr > 20) / marker_diff_arr.shape[0]
+        marker_diff_per = sum(marker_diff_arr > outlier_lim) / marker_diff_arr.shape[0]
         
         outlier_per_marker.append(marker_diff_per)
     
@@ -603,10 +653,11 @@ for i in range(len(wholeArray_diff_with_frame_num)):
 
 
 #%% Plot the outlier percentage of each maker and of each camera
-    
+
 #outlier_per_cam
 """
-xLabel_list = ['shoulder','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3']
+#xLabel_list = ['shoulder','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3']
+xLabel_list = ['handle']
 
 for i in range(len(outlier_per_cam)):
     
@@ -624,16 +675,15 @@ for i in range(len(outlier_per_cam)):
     plt_name = "dropout_" +  str(dropout_size) + "_cam_" + str(i+1) + ".png"
     plt.savefig(plt_name)
 """
-    
 
 
 
-#%% Take the ones in camera_lists and camera_lists_interpolated that have cam_diff larger than 20
+#%% Take the ones in camera_lists and camera_lists_interpolated that have cam_diff larger than 2 standard deviations compared to the mean value
 
-cam_lists_outliers_original = []
+cam_lists_outliers_original = [] #from the robot_Lists, using robot data
 cam_lists_outliers_interpolated = []
 
-cam_lists_outlier_original_wholeSection = []
+cam_lists_outlier_original_wholeSection = [] #from the robot_Lists, using robot data
 cam_lists_outliers_interpolated_wholeSection = []
 
 for i in range(len(camera_diff)):
@@ -657,10 +707,12 @@ for i in range(len(camera_diff)):
             diffs = camera_diff[i][j][k][:,3]
             outlier_diffs = diffs > outlier_lim
             
-            tmp_original = camera_lists[i][j][k][dropout_start_pos:dropout_end_pos,:]
+            #tmp_original = camera_lists[i][j][k][dropout_start_pos:dropout_end_pos,:]
+            tmp_original = robot_lists[i][j][k][dropout_start_pos:dropout_end_pos,:]
             tmp_interpolated = camera_lists_interpolated[i][j][k][dropout_start_pos:dropout_end_pos,:]
             
-            tmp_original_wholeSection = camera_lists[i][j][k][:,:]
+            #tmp_original_wholeSection = camera_lists[i][j][k][:,:]
+            tmp_original_wholeSection = robot_lists[i][j][k][:,:]
             tmp_interpolated_wholeSection = camera_lists_interpolated[i][j][k][:,:]
             
             if tmp_original[outlier_diffs,:].size != 0:
@@ -685,7 +737,7 @@ for i in range(len(camera_diff)):
     
 #%% Combine all the sections in each marker into one array, simply just for easiness for later plotting
 
-cam_lists_outliers_original_combined = []
+cam_lists_outliers_original_combined = [] #from the robot_Lists, using robot data
 cam_lists_outliers_interpolated_combined = []
 
 
@@ -727,11 +779,11 @@ for i in range(len(cam_lists_outliers_original)):
     
     
 #%%
-save_file_original = cam_lists_outliers_original_combined
-save_file_name_original = 'original'
+#save_file_original = cam_lists_outliers_original_combined
+#save_file_name_original = 'original'
 
-save_file_interpolated = cam_lists_outliers_interpolated_combined
-save_file_name_interpolated = 'interpolated'
+#save_file_interpolated = cam_lists_outliers_interpolated_combined
+#save_file_name_interpolated = 'interpolated'
 
 #my_var_name = [ k for k,v in locals().iteritems() if v == my_var][0]#%%
 #np.savetxt(os.path.basename(main_folder) + '_dropout_size_' + str(dropout_size) + '_' + save_file_name_original + '.csv', save_file_original, delimiter = ',', fmt='%1.3f')
@@ -763,10 +815,11 @@ markers_rows_nums = [0]
 
 markers_count = 0
 
+frame_num_to_plot = 0
+
 current_plot_num = 1
 
-frame_num_to_plot = 1
-
+plt.figure()
 #plt.plot()
 
 #plt.title("Outlier Examples of Interpolation Results")

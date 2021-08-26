@@ -75,10 +75,10 @@ rcParams['ps.fonttype'] = 42
 #robot_name = '\CameraDistances_20201207_RW_staggeredDistances003_cds_kin.csv'
 #robot_sync = '\CameraDistances_20201207_RW_staggeredDistances003_cds_analog.csv'
 
-DLC_folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03-handle\reconstructed-3d-data'
+DLC_folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\reconstructed-3d-data'
 DLC_name = '\output_3d_data.csv'
 
-robot_folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03-handle\neural-data'
+robot_folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\neural-data'
 robot_name = '\Crackle_20201203_RT_LeftS1_4cameras_joe_002_cds_kin.csv'
 robot_sync = '\Crackle_20201203_RT_LeftS1_4cameras_joe_002_cds_analog.csv'
 
@@ -503,17 +503,37 @@ Singular values of a.
 lstsq_rbt_fillin = np.zeros(rbt_downsampled['x'].shape[0])
 lstsq_rbt = rbt_downsampled[['x','y']]
 lstsq_rbt['z'] = lstsq_rbt_fillin
-lstsq_rbt_norm = lstsq_rbt - np.mean(lstsq_rbt)
+lstsq_rbt['One'] = np.ones(rbt_downsampled['x'].shape[0])
+
+#lstsq_rbt_norm = lstsq_rbt - np.mean(lstsq_rbt)
 
 #Version of DLC data that... has the z axis (in 3D)
 
 #lstsq_dlc = DLC[['objectA_x','objectA_y','objectA_z']]
 #lstsq_dlc = DLC[['hand3_x','hand3_y','hand3_z']]
 lstsq_dlc = DLC[['handle_x','handle_y','handle_z']]
-lstsq_dlc_norm = lstsq_dlc - np.mean(lstsq_dlc)
-lstsq_dlc_norm.drop(lstsq_dlc_norm.head(1).index,inplace=True) #dlc has one more row than robot
+lstsq_dlc = lstsq_dlc/10
+lstsq_dlc['One'] = np.ones(lstsq_dlc['handle_x'].shape[0])
+lstsq_dlc.drop(lstsq_dlc.head(3).index,inplace=True) #dlc has one more row than robot
+
+#lstsq_dlc_norm = lstsq_dlc - np.mean(lstsq_dlc)
+#lstsq_dlc_norm.drop(lstsq_dlc_norm.head(1).index,inplace=True) #dlc has one more row than robot
 
 print(np.std(lstsq_dlc))
+
+
+#%%
+
+
+#P = np.dot(handle, np.linalg.pinv(dlc))
+
+P = np.dot(lstsq_rbt.T, np.linalg.pinv(lstsq_dlc.T))
+
+
+
+
+
+
 #%%
 
 """
@@ -615,7 +635,11 @@ lstsq_dlc_prediction_filt_df = pd.DataFrame(lstsq_dlc_prediction_filt, columns =
 #%% least-squares the data with only raw data
 lstsq_rawData = np.linalg.lstsq(lstsq_dlc.loc[start_fr:end_fr,:]/10,lstsq_rbt.loc[start_fr:end_fr-1,:])
 
+"""
+Notes 20210126:
 
+
+"""
 
 #%% Plot the prediction results
 

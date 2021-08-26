@@ -34,8 +34,8 @@ import seaborn as sns
 #%% Step 0: read in CSV
 
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\reconsturcted-3d-data\output_3d_data.csv')
-df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\reconstructed-3d-data-RT3D\output_3d_data.csv')
-f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D.txt", "r")
+df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_3_results\reconstructed-3d-data-RT3D\output_3d_data.csv')
+f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D-2.txt", "r")
 
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\reconstructed-3d-data\output_3d_data.csv')
 #f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-RandomTarget\videos\Ground_truth_segments_20200804_RT.txt", "r") 
@@ -107,7 +107,7 @@ df_exp_only = experiment_trial_segment(df, f_frame_list)*1000/1e6
 
 #%%Step1-3-1: Separate all the useful columns (x,y,z; not the scores) out, and take the max and min values
 
-whole_plot_limit = 1
+whole_plot_limit = 0
 
 
 #bp_interested = ['shoulder1', 'arm1', 'arm2', 'elbow1', 'elbow2', 'wrist1', 
@@ -351,9 +351,9 @@ z_lim = np.arange(0, abs(z_lim_high_cm)+abs(z_lim_low_cm), block_size)
 #wrist2_front_YZ_axis_heatmap = np.zeros((int((y_lim_high-y_lim_low)*lim_percentage/step),int((z_lim_high-z_lim_low)*lim_percentage/step))) 
 
 #Create heatmap from 3 sides, for counting
-wrist2_right_XZ_axis_heatmap = np.zeros((int(max(x_lim)/block_size),int(max(z_lim)/block_size)))
-wrist2_up_XY_axis_heatmap = np.zeros((int(max(x_lim)/block_size),int(max(y_lim)/block_size)))
-wrist2_front_YZ_axis_heatmap = np.zeros((int(max(y_lim)/block_size),int(max(z_lim)/block_size)))
+wrist2_right_XZ_axis_heatmap = np.zeros((int(max(x_lim)/block_size),int(max(z_lim)/block_size)+10))
+wrist2_up_XY_axis_heatmap = np.zeros((int(max(x_lim)/block_size),int(max(y_lim)/block_size)+10))
+wrist2_front_YZ_axis_heatmap = np.zeros((int(max(y_lim)/block_size),int(max(z_lim)/block_size)+10))
 
 #Count, from each side, how many times the wrist2 marker went through a box (1cm)
 for i in range(df_exp_wrist2_rounded_right_XZ.shape[0]):

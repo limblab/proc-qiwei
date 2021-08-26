@@ -48,28 +48,53 @@ from numpy import savetxt
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_2_results\reconstructed-3d-data-RT3D\output_3d_data.csv')
 #f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D-2.txt", "r")
 
-df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_3_results\reconstructed-3d-data-RT3D\output_3d_data.csv')
-f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D-2.txt", "r")
+# =============================================================================
+# df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_3_results\reconstructed-3d-data-RT3D\output_3d_data.csv')
+# f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D-2.txt", "r")
+# 
+# df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_3_results\reconstructed-3d-data-RT2D\output_3d_data.csv')
+# f_2D = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT2D.txt", "r")
+# =============================================================================
 
+# =============================================================================
+# df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+# f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\videos\Ground_truth_segments_2020-08-07-RT2D.txt", "r")
+# 
+# df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT3D\reconsturcted-3d-data\output_3d_data.csv')
+# f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT3D\videos\Ground_truth_segments_2020-08-07-RT3D.txt", "r")
+# =============================================================================
 
-#df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Iteration_1_results\reconstructed-3d-data-RT3D\output_3d_data.csv')
-#f_2D = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D-2.txt", "r")
+df = pd.read_csv (r'D:\DLC_Folders_Currently_In_Use\Han-Qiwei-2020-08-07-RT3D\reconsturcted-3d-data\output_3d_data.csv')
+f = open(r"D:\DLC_Folders_Currently_In_Use\Han-Qiwei-2020-08-07-RT3D\videos\Ground_truth_segments_2020-08-07-RT3D.txt", "r")
 
-#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\reconsturcted-3d-data\output_3d_data.csv')
-#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT2D\videos\Ground_truth_segments_2020-08-07-RT2D.txt", "r")
+df_2D = pd.read_csv (r'D:\DLC_Folders_Currently_In_Use\Han-Qiwei-2020-08-07-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+f_2D = open(r"D:\DLC_Folders_Currently_In_Use\Han-Qiwei-2020-08-07-RT2D\videos\Ground_truth_segments_2020-08-07-RT2D.txt", "r")
 
-#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT3D\reconsturcted-3d-data\output_3d_data.csv')
-#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-07-RT3D\videos\Ground_truth_segments_2020-08-07-RT3D.txt", "r")
 
 #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\reconsturcted-3d-data\output_3d_data.csv')
 #f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt", "r")
 
+# =============================================================================
+# df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\reconsturcted-3d-data\output_3d_data.csv')
+# f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\videos\Ground_truth_segments_2020-09-22-RT3D.txt", "r")
+# 
+# df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+# f_2D = open(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt',"r")
+# =============================================================================
 
-#df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\reconsturcted-3d-data\output_3d_data.csv')
-#f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT3D\videos\Ground_truth_segments_2020-09-22-RT3D.txt", "r")
 
-#df_2D = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\reconsturcted-3d-data\output_3d_data.csv')
-#f_2D = open(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt',"r")
+# =============================================================================
+# df = pd.read_csv (r'D:\DLC_Folders_Currently_In_Use\Han-Qiwei-2020-09-22-RT3D\reconsturcted-3d-data\output_3d_data.csv')
+# f = open(r"D:\DLC_Folders_Currently_In_Use\Han-Qiwei-2020-09-22-RT3D\videos\Ground_truth_segments_2020-09-22-RT3D.txt", "r")
+# 
+# df_2D = pd.read_csv (r'D:\DLC_Folders_Currently_In_Use\Han-Qiwei-2020-09-22-RT2D\reconsturcted-3d-data\output_3d_data.csv')
+# f_2D = open(r'D:\DLC_Folders_Currently_In_Use\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt',"r")
+# =============================================================================
+
+
+
+
+
 #%%Get the ground truth array for experiment trial segmentation
 
 frames_per_second = 25
@@ -140,16 +165,16 @@ def speed_calc_3D(X,Y,Z,fps):
 
 #%%Segment/Separate the experiment trials out from this dataset, and convert the digits from mm to m
 f_frame_list_3D = ground_truth_array_extraction(f,df)
-df_exp_only = experiment_trial_segment(df, f_frame_list_3D)
+df = df[df.index.isin(f_frame_list_3D)]
 #df_exp_only = experiment_trial_segment(df, f_frame_list_3D)*1000/1e6
-df = df_exp_only
+#df = df_exp_only
 #%%
-df.to_csv("temp.csv")
+#df.to_csv("temp.csv")
 #%%
 f_frame_list_2D = ground_truth_array_extraction(f_2D,df_2D)
-df_exp_only_2D = experiment_trial_segment(df_2D, f_frame_list_2D)
+df_2D = df_2D[df_2D.index.isin(f_frame_list_2D)]
 #df_exp_only_2D = experiment_trial_segment(df, f_frame_list_3D)*1000/1e6
-df_2D = df_exp_only_2D
+#df_2D = df_exp_only_2D
 #%% Read in the 2D reaching dataset to compare the hand speed with 3D dataset (TEMP)
 
 nframes_2D = len(df_2D)
@@ -161,6 +186,7 @@ except:
     print("error line 128")
     
 df_np_2D = df_2D.to_numpy()*0.001
+#df_np_2D = df_2D.to_numpy()*0.01
 
 df_speed_2D = np.zeros((df_np_2D.shape[0],math.floor(df_np_2D.shape[1]/3)))
 for i in range(df_speed_2D.shape[1]):
@@ -189,7 +215,8 @@ except:
     print("error line 154")
 #df_np = df.to_numpy()*0.001 #in meters?
     
-df_np = df.to_numpy()*0.001 #in meters
+df_np = df.to_numpy()*0.01 #in meters
+#df_np = df.to_numpy()*0.01 #in meters #TODO: try
 
 df_speed = np.zeros((df_np.shape[0],math.floor(df_np.shape[1]/3)))
 for i in range(df_speed.shape[1]):
@@ -300,18 +327,19 @@ savetxt('df_speed_Crackle_Qiwei_2020_12_03_RT3D.csv', df_speed_with_fnum,delimit
 
 #%% 3D Scatter speed & location plot
 
-section_start = 0
-section_end = 1000
+section_start = 1000
+section_end = 2000
 
 
 fig = plt.figure()
 ax = fig.add_subplot(111,projection="3d")
 cmap = plt.get_cmap("jet")
 
-#cax = ax.scatter(df_np_2D[:,18],df_np_2D[:,19],df_np_2D[:,20],c=df_speed_2D[:,6],s=5,cmap=cmap,vmax=0.5)
+cax = ax.scatter(df_np_2D[:,18],df_np_2D[:,19],df_np_2D[:,20],c=df_speed_2D[:,6],s=5,cmap=cmap,vmax=0.5)
+#cax = ax.scatter(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20],c=df_speed[section_start:section_end,6],s=5,cmap=cmap)
+
 #cax = ax.scatter(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20],c=df_speed[section_start:section_end,6],s=5,cmap=cmap,vmax=1.2)
-cax = ax.scatter(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20],c=df_speed[section_start:section_end,6],s=5,cmap=cmap)
-#cax = ax.plot(xs=df_np[section_start:section_end,18],ys=df_np[section_start:section_end,19],zs=df_np[section_start:section_end,20])
+##cax = ax.plot(xs=df_np[section_start:section_end,18],ys=df_np[section_start:section_end,19],zs=df_np[section_start:section_end,20])
 #cax = ax.scatter(df_np_2D[section_start:section_end,18],df_np_2D[section_start:section_end,19],df_np_2D[section_start:section_end,20],c=df_speed_2D[section_start:section_end,6],s=5,cmap=cmap,vmax=1.2)
 
 
@@ -373,6 +401,41 @@ default colour (in this case, jet) will continue to apply.
 
 
 
+#%% Plot the positions of hand markers from the 2 models for comparison
+#！！！Only when both models are from the same dataset
+#For now (20210206 for lab meeting) I'm setting the actual data of the name "df_2D"
+#as another RT3D dataaset from the same video, estimated by another model.
+
+section_start = 7000
+section_end = 7300
+
+fig = plt.figure(figsize=(12,10))
+ax = fig.add_subplot(111,projection="3d")
+#cmap = plt.get_cmap("jet")
+
+#cax = ax.scatter(df_np_2D[:,18],df_np_2D[:,19],df_np_2D[:,20],c=df_speed_2D[:,6],s=5,cmap=cmap,vmax=0.5)
+#cax = ax.scatter(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20],c=df_speed[section_start:section_end,6],s=5,cmap=cmap,vmax=1.2)
+#cax = ax.scatter(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20],c=df_speed[section_start:section_end,6],s=5)
+#cax = ax.plot(xs=df_np[section_start:section_end,18],ys=df_np[section_start:section_end,19],zs=df_np[section_start:section_end,20])
+#cax = ax.scatter(df_np_2D[section_start:section_end,18],df_np_2D[section_start:section_end,19],df_np_2D[section_start:section_end,20],c=df_speed_2D[section_start:section_end,6],s=5)
+cax = ax.plot(df_np[section_start:section_end,18],df_np[section_start:section_end,19],df_np[section_start:section_end,20],label='Qiwei')
+cax = ax.plot(df_np_2D[section_start:section_end,18],df_np_2D[section_start:section_end,19],df_np_2D[section_start:section_end,20],label='Qiwei+Joe')
+
+cbar.ax.get_yaxis().labelpad = 15
+cbar.ax.set_ylabel("m/s",rotation=270,**font_medium)
+
+plt.xlabel("X Axis (in meters)",**font,labelpad=15)
+plt.ylabel("Y Axis (in meters)",**font,labelpad=15)
+plt.title("3D-Reconstructed data from model Q and model Q+J",**font)
+
+plt.xticks(fontsize=16)
+plt.yticks(fontsize=16)
+
+plt.rc('font', size=16)
+plt.legend(loc= 'lower left')
+plt.show()
+
+
 
 #%% Plot a histogram distribution of the hand speed for both 2D and 3D datasets
 """
@@ -391,8 +454,10 @@ Uncomment line 283 and 284 if you have 2D data
 """
 
 bin_size = 50
-x1 = df_speed_2D[:,6]
-x1_limited = x1[x1<3]
+#x1 = df_speed_2D[:,6]
+#x1_limited = x1[x1<3]
+x1 = df_np[:,6]
+x1_limited = x1
 #plt.hist(x1,alpha=0.5,label='2D',bins=50,histtype=u'step',linewidth = 3)
 #plt.hist(x1_limited,alpha=0.5,label='2D ' + str(x1_limited.shape[0]) + ' frames',bins=50,histtype=u'step',linewidth = 3)
 #plt.hist(x1_limited,density=True,bins=100,alpha=0.5,linewidth=3,label='2D ' + str(x1_limited.shape[0]) + ' frames',histtype=u'step')
@@ -405,8 +470,10 @@ x1_limited = x1[x1<3]
 #plt.hist(x1_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='2D ',histtype='step',linewidth = 3)
 plt.hist(x1_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='Qiwei Only',histtype='step',linewidth = 3)
 
-x2 = df_speed[:,6]
-x2_limited = x2[x2<3]
+#x2 = df_speed[:,6]
+#x2_limited = x2[x2<3]
+x2 = df_np_2D[:,6]
+x2_limited = x2
 #x2 = x2[x2<3]
 #plt.hist(x2,alpha=0.5,label='3D',bins=15,histtype=u'step',linewidth = 3)
 #plt.hist(x2_limited,density=True,alpha=0.5,label='3D ' + str(x2_limited.shape[0]) + ' frames',bins=50,histtype=u'step',linewidth = 3)
@@ -439,6 +506,67 @@ print(np.mean(x2))
 #%% Speed difference
 df_speed_diff = np.sqrt((df_speed - df_speed_2D)**2)
 df_speed_diff_mean = df_speed_diff.mean(axis=0)
+print("df_speed_diff ", df_speed_diff)
+print("df_speed_diff_mean ", df_speed_diff_mean)
+
+
+
+#%%
+
+plt.figure(figsize=(12,6))
+
+bin_size = 50
+
+#df_np
+#plt.hist(x1_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='Qiwei Only',histtype='step',linewidth = 3)
+
+#df_np_2D
+#plt.hist(x2_limited,density=True,stacked=True,range=(0,1.5),bins=bin_size,alpha=0.5,label='Qiwei & Joe',histtype='step',linewidth = 3)
+
+
+
+marker_diff_per_marker = np.zeros((len(df_np),int(np.round(df_np.shape[1]/3))))
+for i in range(int(np.round(df_np.shape[1]/3))):
+    X = i*3
+    Y = i*3+1
+    Z = i*3+2
+    
+    df_np_tmp = df_np[:,(X,Y,Z)]
+    df_np_2D_tmp = df_np_2D[:,(X,Y,Z)]
+    
+    diff = np.linalg.norm(df_np_tmp - df_np_2D_tmp,axis=1)
+    
+    #per_marker_diff = np.sqrt([:,X]**2 + marker_diff[:,Y]**2 + marker_diff[:,Z]**2)
+    #marker_diff_per_marker[:,i] = per_marker_diff
+    marker_diff_per_marker[:,i] = diff
+    print(X,Y,Z)
+
+plt.hist(marker_diff_per_marker,label=['shoulder','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3'],bins=50,histtype='step',linewidth = 3)
+
+plt.xlabel("position difference",**font_medium)
+plt.ylabel("number of frames",**font_medium)
+plt.title("Comparing marker position difference between model1 (Qiwei) and model2 (Qiwei & Joe)",**font_medium)
+
+plt.xticks(fontsize = 16)
+plt.yticks(fontsize = 16)
+
+#plt.gca().yaxis.set_major_formatter(PercentFormatter(bin_size))
+plt.legend()
+plt.show()
+
+print(np.mean(x1))
+print(np.mean(x2))
+
+
+
+
+
+
+
+
+
+
+
 
 
 

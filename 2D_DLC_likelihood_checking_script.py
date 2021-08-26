@@ -23,19 +23,160 @@ import copy
 import seaborn as sns
 
 #%% Read in 4 DLC tracking files (2D) for the same project
-    
-cam1 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00017DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
-cam2 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00018DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
-cam3 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00019DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
-cam4 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00020DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
 
-f = open(r"C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt", "r") 
+#folder = 
+# =============================================================================
+# 
+# cam1 = pandas.read_hdf(r'D:\DLC_Folders\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00017DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+# cam2 = pandas.read_hdf(r'D:\DLC_Folders\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00018DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+# cam3 = pandas.read_hdf(r'D:\DLC_Folders\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00019DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+# cam4 = pandas.read_hdf(r'D:\DLC_Folders\Han-Qiwei-2020-09-22-RT2D\videos\exp_han_00020DLC_resnet50_HanSep22shuffle1_1030000filtered.h5')
+# 
+# f = open(r"D:\DLC_Folders\Han-Qiwei-2020-09-22-RT2D\videos\Ground_truth_segments_2020-09-22-RT2D.txt", "r") 
+# =============================================================================
+
+# =============================================================================
+# 
+# cam1 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han_20201204_rwFreeReach\videos\Han_20201204_00005DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam2 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han_20201204_rwFreeReach\videos\Han_20201204_00006DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam3 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han_20201204_rwFreeReach\videos\Han_20201204_00007DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam4 = pandas.read_hdf(r'C:\Users\dongq\DeepLabCut\Han_20201204_rwFreeReach\videos\Han_20201204_00008DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# 
+# f = open(r"C:\Users\dongq\DeepLabCut\Han_20201204_rwFreeReach\Han_20201204_RT3D_groundTruth.txt", "r") 
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\videos'
+# cam1 = pandas.read_hdf(folder + r'\Crackle_20201203_00001DLC_resnet50_TestDec3shuffle1_1030000filtered.h5')
+# cam2 = pandas.read_hdf(folder + r'\Crackle_20201203_00002DLC_resnet50_TestDec3shuffle1_1030000filtered.h5')
+# cam3 = pandas.read_hdf(folder + r'\Crackle_20201203_00003DLC_resnet50_TestDec3shuffle1_1030000filtered.h5')
+# cam4 = pandas.read_hdf(folder + r'\Crackle_20201203_00004DLC_resnet50_TestDec3shuffle1_1030000filtered.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT2D.txt", "r") 
+# frames_per_second = 24
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\videos'
+# cam1 = pandas.read_hdf(folder + r'\Crackle_20201203_00007DLC_resnet50_TestDec3shuffle1_1030000filtered.h5')
+# cam2 = pandas.read_hdf(folder + r'\Crackle_20201203_00008DLC_resnet50_TestDec3shuffle1_1030000filtered.h5')
+# cam3 = pandas.read_hdf(folder + r'\Crackle_20201203_00009DLC_resnet50_TestDec3shuffle1_1030000filtered.h5')
+# cam4 = pandas.read_hdf(folder + r'\Crackle_20201203_00010DLC_resnet50_TestDec3shuffle1_1030000filtered.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D-2.txt", "r") 
+# frames_per_second = 25
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-15\videos'
+# cam1 = pandas.read_hdf(folder + r'\Crackle_20201215_00001DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+# cam2 = pandas.read_hdf(folder + r'\Crackle_20201215_00002DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+# cam3 = pandas.read_hdf(folder + r'\Crackle_20201215_00003DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+# cam4 = pandas.read_hdf(folder + r'\Crackle_20201215_00004DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+# #f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-15\Ground_truth_segments_2020-12-03-RT3D-2.txt", "r") 
+# frames_per_second = 25
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Han_20201203_rwFreeReach\videos'
+# cam1 = pandas.read_hdf(folder + r'\Han_20201203_00006DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam2 = pandas.read_hdf(folder + r'\Han_20201203_00007DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam3 = pandas.read_hdf(folder + r'\Han_20201203_00008DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam4 = pandas.read_hdf(folder + r'\Han_20201203_00009DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Han_20201203_rwFreeReach\Han_20201203_RT2D_groundTruth.txt", "r") 
+# frames_per_second = 25
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Han_20201203_rwFreeReach\videos'
+# cam1 = pandas.read_hdf(folder + r'\Han_20201203_00010DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam2 = pandas.read_hdf(folder + r'\Han_20201203_00011DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam3 = pandas.read_hdf(folder + r'\Han_20201203_00012DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam4 = pandas.read_hdf(folder + r'\Han_20201203_00013DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Han_20201203_rwFreeReach\Han_20201203_RT3D_groundTruth.txt", "r") 
+# frames_per_second = 25
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Han_20201204_rwFreeReach\videos'
+# cam1 = pandas.read_hdf(folder + r'\Han_20201204_00001DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam2 = pandas.read_hdf(folder + r'\Han_20201204_00002DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam3 = pandas.read_hdf(folder + r'\Han_20201204_00003DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam4 = pandas.read_hdf(folder + r'\Han_20201204_00004DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Han_20201204_rwFreeReach\Han_20201204_RT2D_groundTruth.txt", "r") 
+# frames_per_second = 25
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Han_20201204_rwFreeReach\videos'
+# cam1 = pandas.read_hdf(folder + r'\Han_20201204_00005DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam2 = pandas.read_hdf(folder + r'\Han_20201204_00006DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam3 = pandas.read_hdf(folder + r'\Han_20201204_00007DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# cam4 = pandas.read_hdf(folder + r'\Han_20201204_00008DLC_resnet50_Han_202012Dec14shuffle1_1030000.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Han_20201204_rwFreeReach\Han_20201204_RT3D_groundTruth.txt", "r") 
+# frames_per_second = 25
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Han_20201217_rwFreeReach\videos'
+# cam1 = pandas.read_hdf(folder + r'\Han_2020121700001DLC_resnet50_Han_202012Dec14shuffle1_1030000filtered.h5')
+# cam2 = pandas.read_hdf(folder + r'\Han_2020121700002DLC_resnet50_Han_202012Dec14shuffle1_1030000filtered.h5')
+# cam3 = pandas.read_hdf(folder + r'\Han_2020121700003DLC_resnet50_Han_202012Dec14shuffle1_1030000filtered.h5')
+# cam4 = pandas.read_hdf(folder + r'\Han_2020121700004DLC_resnet50_Han_202012Dec14shuffle1_1030000filtered.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Han_20201217_rwFreeReach\Han_20201217_RT3D_groundTruth.txt", "r") 
+# frames_per_second = 25
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Han_20201217_rwFreeReach\videos'
+# cam1 = pandas.read_hdf(folder + r'\Han_2020121700005DLC_resnet50_Han_202012Dec14shuffle1_1030000filtered.h5')
+# cam2 = pandas.read_hdf(folder + r'\Han_2020121700006DLC_resnet50_Han_202012Dec14shuffle1_1030000filtered.h5')
+# cam3 = pandas.read_hdf(folder + r'\Han_2020121700007DLC_resnet50_Han_202012Dec14shuffle1_1030000filtered.h5')
+# cam4 = pandas.read_hdf(folder + r'\Han_2020121700008DLC_resnet50_Han_202012Dec14shuffle1_1030000filtered.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Han_20201217_rwFreeReach\Han_20201217_RT2D_task1_groundTruth.txt", "r") 
+# frames_per_second = 25
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-15\videos'
+# cam1 = pandas.read_hdf(folder + r'\Crackle_20201215_00001DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+# cam2 = pandas.read_hdf(folder + r'\Crackle_20201215_00002DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+# cam3 = pandas.read_hdf(folder + r'\Crackle_20201215_00003DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+# cam4 = pandas.read_hdf(folder + r'\Crackle_20201215_00004DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-15\Ground_truth_segments_2020-12-15-RT3D.txt", "r") 
+# frames_per_second = 24
+# =============================================================================
+
+folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-15\videos'
+cam1 = pandas.read_hdf(folder + r'\Crackle_20201215_00005DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+cam2 = pandas.read_hdf(folder + r'\Crackle_20201215_00006DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+cam3 = pandas.read_hdf(folder + r'\Crackle_20201215_00007DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+cam4 = pandas.read_hdf(folder + r'\Crackle_20201215_00008DLC_resnet50_TestDec14shuffle1_1030000filtered.h5')
+f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-15\Ground_truth_segments_2020-12-15-RT2D-task1.txt", "r") 
+frames_per_second = 25
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-16\videos'
+# cam1 = pandas.read_hdf(folder + r'\Crackle_2020121600001DLC_resnet50_TestDec14shuffle1_650000filtered.h5')
+# cam2 = pandas.read_hdf(folder + r'\Crackle_2020121600002DLC_resnet50_TestDec14shuffle1_650000filtered.h5')
+# cam3 = pandas.read_hdf(folder + r'\Crackle_2020121600003DLC_resnet50_TestDec14shuffle1_650000filtered.h5')
+# cam4 = pandas.read_hdf(folder + r'\Crackle_2020121600004DLC_resnet50_TestDec14shuffle1_650000filtered.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-16\Ground_truth_segments_2020-12-16-RT3D.txt", "r") 
+# frames_per_second = 25
+# =============================================================================
+
+# =============================================================================
+# folder = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-16\videos'
+# cam1 = pandas.read_hdf(folder + r'\Crackle_2020121600005DLC_resnet50_TestDec14shuffle1_650000filtered.h5')
+# cam2 = pandas.read_hdf(folder + r'\Crackle_2020121600006DLC_resnet50_TestDec14shuffle1_650000filtered.h5')
+# cam3 = pandas.read_hdf(folder + r'\Crackle_2020121600007DLC_resnet50_TestDec14shuffle1_650000filtered.h5')
+# cam4 = pandas.read_hdf(folder + r'\Crackle_2020121600008DLC_resnet50_TestDec14shuffle1_650000filtered.h5')
+# f = open(r"C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-16\Ground_truth_segments_2020-12-16-RT2D-task1.txt", "r") 
+# frames_per_second = 25
+# =============================================================================
 
 #%% Get the array for trial segmentation
 #if experiment_phase_only == 1:
     #df = pd.read_csv (r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-08-04-FreeReaching\reconstructed-3d-data\output_3d_data.csv')
 
-frames_per_second = 25
 seconds_per_minute = 60
 
 ground_truth_experiment_segments = f.read()
@@ -102,15 +243,26 @@ cam2 = cam2.to_numpy()
 cam3 = cam3.to_numpy()
 cam4 = cam4.to_numpy()
 
+# =============================================================================
+# cam1_exp_only = cam1
+# cam2_exp_only = cam2
+# cam3_exp_only = cam3
+# cam4_exp_only = cam4
+# =============================================================================
+
 cam1_exp_only = experiment_trial_segment(cam1,f_frame_list)
 cam2_exp_only = experiment_trial_segment(cam2,f_frame_list)
 cam3_exp_only = experiment_trial_segment(cam3,f_frame_list)
 cam4_exp_only = experiment_trial_segment(cam4,f_frame_list)
 
+
+
 #%% Call the count_low_likelihood_points() function
 
 #speed_section = [1,2,4,5,7,8,10,11,13,14,16,17,19,20,22,23,25,26,28,29]
-likelihood_section = [2,5,8,11,14,17,20,23,26,29]
+
+#likelihood_section = [2,5,8,11,14,17,20,23,26,29]
+likelihood_section = [2,5,8,11,14,17,20,23]
 
 threshold = 0.8
 
@@ -148,7 +300,8 @@ def count_hard_to_see_points(cam1, cam2, cam3, cam4):
     cam4_array = cam4
     hard_to_see_points = np.zeros(cam1_array.size)
     print(cam1_array.size)
-    for i in range(cam1_array.size-1):
+    min_len = min(cam1_array.size,cam2_array.size,cam3_array.size,cam4_array.size)
+    for i in range(min_len):
         result1 = bool(cam1_array[i] > 0.9)
         result2 = bool(cam2_array[i] > 0.9)
         result3 = bool(cam3_array[i] > 0.9)
@@ -176,7 +329,6 @@ def count_hard_to_see_points(cam1, cam2, cam3, cam4):
 
 #%% Call the count_hard_to_see_points() function
 
-likelihood_section = [2,5,8,11,14,17,20,23,26,29]
 
 allcam_unseen_points = []
 allcam_unseen_points_exp_only = []
@@ -219,6 +371,7 @@ sum_allcam_3D_recon_exp = []
 
 sum_allcam_3D_recon_percentage = []
 sum_allcam_3D_recon_exp_percentage = []
+std_allcam_3D_recon_exp_percentage = []
 
 total_frames = len(allcam_3D_reconstructable_points[1])
 total_frames_exp = len(allcam_3D_reconstructable_points_exp_only[1])
@@ -229,6 +382,8 @@ for i in range(len(allcam_3D_reconstructable_points)):
     
     sum_allcam_3D_recon_exp.append(sum(allcam_3D_reconstructable_points_exp_only[i]))
     sum_allcam_3D_recon_exp_percentage.append(sum(allcam_3D_reconstructable_points_exp_only[i])/total_frames_exp)
+    std_allcam_3D_recon_exp_percentage.append(np.std(allcam_3D_reconstructable_points_exp_only[i]))
+    
     
 #%% Set the plotting parameters
 
@@ -247,7 +402,9 @@ axis_font = {'fontname':'Arial', 'size':'16'}
 
 #%% Plot the number/percentage of makers that are likely to be 3D reconed
 
-names = ['shoulder1','arm1','arm2','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3']
+#names = ['shoulder1','arm1','arm2','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3']
+#names = ['shoulder1','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3',' ',' ']
+names = ['shoulder1','elbow1','elbow2','wrist1','wrist2','hand1','hand2','hand3']
 N_markers = len(names)
 ind = np.arange(N_markers)
 width=0.4
@@ -256,13 +413,15 @@ plt.figure(figsize = (12,6))
 
 #p1 = plt.bar(ind-0.2,sum_allcam_3D_recon_percentage,width)       
 #p2 = plt.bar(ind+0.2,sum_allcam_3D_recon_exp_percentage,width)
-p2 = plt.bar(ind,sum_allcam_3D_recon_exp_percentage,width)
+p2 = plt.bar(ind,sum_allcam_3D_recon_exp_percentage[0:8],width)
 
 plt.xlabel('Markers',**axis_font)
 plt.ylabel('Percentage of Frames',**axis_font)
-plt.title('Percent of high likelihood frames',**title_font)
+#plt.title('Percentage of high likelihood frames for RT3D task',**title_font)
+plt.title('Percentage of high likelihood frames for RT2D task',**title_font)
 plt.xticks(ind,names,**axis_font)
-plt.yticks(np.arange(0,1,0.05),**axis_font)
+plt.yticks(np.arange(0,1.2,0.2),**axis_font)
+plt.ylim((0,1))
 #plt.legend((p1[0],p2[0]),('Whole Recording','Experiment Only'),loc='lower right')
 #plt.set_fontsize(20)
 
@@ -270,7 +429,12 @@ plt.show()
 
 
 
-#%% plot change of likelihood through time for all 10 markers
+#%% save in /video folder
+
+save_file_name = folder + r'\2D_tracking_likelihood.csv'
+df = pd.DataFrame([sum_allcam_3D_recon_exp_percentage[0:8],std_allcam_3D_recon_exp_percentage[0:8]])
+df.index = ['mean','std']
+df.to_csv(save_file_name)
 
 #plt
 

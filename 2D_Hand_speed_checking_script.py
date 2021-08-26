@@ -23,14 +23,20 @@ import seaborn as sns
 import copy
 #%% Read in file
 
-file_dir = r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos'
+#file_dir = r'C:\Users\dongq\DeepLabCut\Han-Qiwei-2020-09-22-RT2D\videos'
 
-cam1 = r'\exp_han_00017DLC_resnet50_HanSep22shuffle1_1030000.csv'
-cam2 = r'\exp_han_00018DLC_resnet50_HanSep22shuffle1_1030000.csv'
-cam3 = r'\exp_han_00019DLC_resnet50_HanSep22shuffle1_1030000.csv'
-cam4 = r'\exp_han_00020DLC_resnet50_HanSep22shuffle1_1030000.csv'
-g_truth = r'\Ground_truth_segments_2020-09-22-RT2D.txt'
+#cam1 = r'\exp_han_00017DLC_resnet50_HanSep22shuffle1_1030000.csv'
+#cam2 = r'\exp_han_00018DLC_resnet50_HanSep22shuffle1_1030000.csv'
+#cam3 = r'\exp_han_00019DLC_resnet50_HanSep22shuffle1_1030000.csv'
+#cam4 = r'\exp_han_00020DLC_resnet50_HanSep22shuffle1_1030000.csv'
+#g_truth = r'\Ground_truth_segments_2020-09-22-RT2D.txt'
 
+file_dir = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\videos\results_Qiwei_New_Iter3'
+cam1 = r'\Crackle_20201203_00007DLC_resnet50_TestDec3shuffle1_1030000filtered.csv'
+cam2 = r'\Crackle_20201203_00008DLC_resnet50_TestDec3shuffle1_1030000filtered.csv'
+cam3 = r'\Crackle_20201203_00009DLC_resnet50_TestDec3shuffle1_1030000filtered.csv'
+cam4 = r'\Crackle_20201203_00010DLC_resnet50_TestDec3shuffle1_1030000filtered.csv'
+g_truth = r'C:\Users\dongq\DeepLabCut\Crackle-Qiwei-2020-12-03\Ground_truth_segments_2020-12-03-RT3D-2.txt'
 
 df_c1 = pd.read_csv(file_dir + cam1)
 df_c2 = pd.read_csv(file_dir + cam2)
@@ -68,7 +74,7 @@ diff_c4 = np.diff(df_c4,axis=0)
 frames_per_second = 25
 seconds_per_minute = 60
 
-f = open(file_dir + g_truth, 'r')
+f = open(g_truth, 'r')
 ground_truth_experiment_segments = f.read()
 f_temp = ground_truth_experiment_segments.split(" ")
 f_seg = np.zeros((int(len(f_temp)/4),4))
@@ -372,9 +378,9 @@ chosen_pos_c4_x, chosen_pos_c4_y = choose_markers_position(df_c4_copy,len(marker
 
 
 #Experiment phase
-plot_length = 10 * frames_per_second #number of frames
-start_frame = 5000
-end_frame = 5000 + plot_length
+plot_length = 3 * frames_per_second #number of frames
+start_frame = 6000
+end_frame = start_frame + plot_length
 
 #Non-Experiment phase
 #start_frame = 18500
@@ -387,7 +393,7 @@ fig = plt.figure()
 ax1 = fig.add_subplot(111)
 #ax1.scatter(chosen_pos_c1_x[start_frame,0],chosen_pos_c1[start_frame,1],0)
 for i in range(plot_length):
-    plt.plot(chosen_pos_c1_x[start_frame + i,:],chosen_pos_c1_y[start_frame+i,:],0)
+    plt.plot(chosen_pos_c1_x[start_frame + i,:],chosen_pos_c1_y[start_frame+i,:])
 
-
+plt.title("stick figures of camera 1 in 2D")
 
